@@ -8,6 +8,6 @@ public class PlayerHP : MonoBehaviour
 
     void Update()
     {
-        this.transform.localScale = new Vector3((0 + 1 * CA.HP / CA.MaxHP), 1, 1);
+        this.transform.localScale = new Vector3((0 + 1.168f * CA.HP / CA.MaxHP), 0.69f, 1);
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public static int IsDialoged = 0;
+    public static bool ActionProhibit = false;
     public Animator anim1;
     CharacterController controller;
     public Shoot shoot;
@@ -14,12 +15,13 @@ public class Character : MonoBehaviour
         StartCoroutine(RandomIdle());
         StartCoroutine(NormalAttackFirstStrike());
         StartCoroutine(DashFunction());
+        Input.GetKey(KeyCode.X);
     }
     void FixedUpdate()
     {
 
         AccelerateFunction();
-        if (Cursor.visible == false)
+        if (Cursor.visible == false && ActionProhibit == false)
         {
             MoveFunction();
         }
@@ -39,7 +41,7 @@ public class Character : MonoBehaviour
     }
     private void Update()
     {
-        
+        //Debug.Log(IsDialoged);
         AS = anim1.GetFloat("AS");
         //GunShotRotation();
     }
@@ -48,7 +50,6 @@ public class Character : MonoBehaviour
     public static float imaangle;
     Vector3 move;
     public Vector3 dir,DirCache;
-
     float h;
     float j;
     private void MoveFunction()
@@ -226,7 +227,7 @@ public class Character : MonoBehaviour
                 yield return new WaitForSeconds(0.6f/AS);
             }
             SecondStrikeTrigger = false;
-            if (Input.GetKey(KeyCode.Mouse0) && anim1.GetBool("Attack2") == false && anim1.GetBool("Attack3") == false && Cursor.visible == false)
+            if (Input.GetKey(KeyCode.Mouse0) && anim1.GetBool("Attack2") == false && anim1.GetBool("Attack3") == false && Cursor.visible == false && ActionProhibit == false)
             {
 
                 ShootAllow = 1;
@@ -383,7 +384,7 @@ public class Character : MonoBehaviour
             t+= Time.deltaTime*33*AS;
             if (t <= 8)
             {
-                emission = t;
+                emission = t; 
                 gun_m[i].SetColor("_EmissionColor", Vector4.Lerp(gun_m[i].GetVector("_EmissionColor"), new Vector4(0.1f, 0.5f, 0.745f, 1), 0.5f));
                 gun_m[i].SetFloat("_emission", emission);
                 yield return new WaitForEndOfFrame();

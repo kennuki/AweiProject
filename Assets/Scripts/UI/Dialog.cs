@@ -9,8 +9,6 @@ public class Dialog : MonoBehaviour
     public float t;
     void Start()
     {
-        Character.IsDialoged++;
-        t = Character.IsDialoged;
         cd = GetComponent<Collider>();
     }
     Collider cd;
@@ -21,13 +19,19 @@ public class Dialog : MonoBehaviour
     public string[] text;
     public int Num;
     public int[] PlayerNum;
+    public float[] DialogTimeScale;
+    public bool[] CharacterActionProhibit;
+    bool LeftClick = false;
     // Update is called once per frame
     void Update()
     {
-        if (Character.IsDialoged-t>1)
+        if (Character.IsDialoged-t>2)
         {
-            Character.IsDialoged -= 1;
-            Destroy(this);
+            Destroy(gameObject);
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            LeftClick = true;
         }
     }
     private IEnumerator ShowTextFunction()
@@ -42,10 +46,23 @@ public class Dialog : MonoBehaviour
             {
                 Dialog_T.color = new Vector4(0.73f, 0.74f, 0.96f,1);
             }
+            Character.ActionProhibit = CharacterActionProhibit[i];
+            Time.timeScale = DialogTimeScale[i];
             DialogImage.SetActive(true);
             Dialog_T.text = text[i];
-                yield return new WaitForSeconds(RunTime[i]);
+            for(float j = 0; j < RunTime[i]; j += 0.1f)
+            {
+                if(LeftClick == true)
+                {
+                    j = RunTime[i]+1;
+                    LeftClick = false;
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+            
         }
+        Character.ActionProhibit = false;
+        Time.timeScale = 1;
         DialogImage.SetActive(false);
     }
     private void OnTriggerEnter(Collider other)
@@ -53,8 +70,9 @@ public class Dialog : MonoBehaviour
         nexttrigger.SetActive(true);
         if(other.tag == "Player")
         {
-            StartCoroutine(ShowTextFunction());
             Destroy(cd);
+            Character.IsDialoged++;
+            StartCoroutine(ShowTextFunction());
         }
         else if (other.tag == "Pin")
         {

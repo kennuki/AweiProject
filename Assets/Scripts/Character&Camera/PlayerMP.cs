@@ -8,6 +8,6 @@ public class PlayerMP : MonoBehaviour
 
     void Update()
     {
-        this.transform.localScale = new Vector3((0 + 1 * CA.MP / CA.MaxMP), 1, 1);
+        this.transform.localScale = new Vector3((0 + 1.168f * CA.MP / CA.MaxMP), 0.69f, 1);
     }
 }

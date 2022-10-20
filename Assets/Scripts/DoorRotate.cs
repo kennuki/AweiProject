@@ -29,7 +29,7 @@ public class DoorRotate : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            monster.SetActive(true);
+            monster.SetActive(true);    
             StartCoroutine(RotateFunction());
             Destroy(cd);
         }
