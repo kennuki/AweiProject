@@ -8,7 +8,7 @@ public class ItemWorld : MonoBehaviour
     {
         Transform transform = Instantiate(ItemAsset.Instance.ItemWorld, position, Quaternion.identity);
 
-        ItemWorld itemWorld = transform.GetComponent<ItemWorld>();
+        ItemWorld itemWorld = transform.GetComponent <ItemWorld>();
         itemWorld.SetItem(item);
 
         return itemWorld;

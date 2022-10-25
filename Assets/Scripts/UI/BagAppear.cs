@@ -13,7 +13,7 @@ public class BagAppear : MonoBehaviour
     {
         if(recttransform.anchoredPosition.x==0)
         {
-            recttransform.anchoredPosition = new Vector2(960, -540);
+            recttransform.anchoredPosition = new Vector2(1920, -540);
         }
         else
         {

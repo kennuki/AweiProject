@@ -14,6 +14,7 @@ public class ItemAsset : MonoBehaviour
     public Sprite ManaPotion;
     public Sprite Crystal;
     public Sprite OldLetter;
+    public Sprite Kumo;
 
     public Transform ItemWorld;
 
