@@ -75,7 +75,7 @@ public class CameraRotation : MonoBehaviour
             Cursor.visible = false;
             cameratotate = true;
             BagIcon.SetActive(false);
-            rect.anchoredPosition = new Vector2(0, -540);
+            rect.anchoredPosition = new Vector2(-998, -213);
         }
         else if (Input.GetKeyDown(KeyCode.LeftAlt) && cameratotate == true)
         {

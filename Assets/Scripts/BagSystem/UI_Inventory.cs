@@ -7,12 +7,16 @@ using TMPro;
 public class UI_Inventory : MonoBehaviour
 {
     private Inventory inventory;
+    private Transform mask;
     private Transform ItemSlotContainer;
     private Transform ItemSlotTemplate;
+    private RectTransform ItemSlotContainerRect;
     private void Start()
     {
-        ItemSlotContainer = transform.Find("ItemSlotContainer");
+        mask = transform.Find("mask");
+        ItemSlotContainer = mask.Find("ItemSlotContainer");
         ItemSlotTemplate = ItemSlotContainer.Find("ItemSlotTemplate");
+        ItemSlotContainerRect = ItemSlotContainer.GetComponent<RectTransform>();
     }
 
 
@@ -41,8 +45,9 @@ public class UI_Inventory : MonoBehaviour
         }
         int x = 0;
         int y = 0;
-        float ItemSlotCellSize = 130;
-        Vector2 Offset = new Vector2(8, -5);
+        float ItemSlotCellSize = 150;
+        Vector2 Offset = new Vector2(-1325, 400);
+        Vector2 ContainerScale = new Vector2(612.4f, -197.818181f);
         foreach(Item item in inventory.GetItemList())
         {
             if (item.amount <= 0) 
@@ -57,15 +62,21 @@ public class UI_Inventory : MonoBehaviour
                     MPtext.SetText(item.amount.ToString());
                 }
                 continue;
-            } 
+            }
+            ItemSlotContainerRect.sizeDelta = ContainerScale + new Vector2(0, 151.272727f);
+            ContainerScale = ItemSlotContainerRect.sizeDelta;
             RectTransform ItemSlotRectTransform = Instantiate(ItemSlotTemplate, ItemSlotContainer).GetComponent<RectTransform>();
             ItemSlotRectTransform.gameObject.SetActive(true);
             ItemSlotRectTransform.anchoredPosition = new Vector2(x * ItemSlotCellSize, y * ItemSlotCellSize) + Offset;
             Image image = ItemSlotRectTransform.Find("Image").GetComponent<Image>();
+            Image image2 = ItemSlotRectTransform.Find("ImageKumo").GetComponent<Image>();
             image.sprite = item.GetSprite();
-
-            TextMeshProUGUI uitext = ItemSlotRectTransform.Find("Text").GetComponent<TextMeshProUGUI>();
-            if (item.amount > 1)
+            TextMeshProUGUI uitext = ItemSlotRectTransform.Find("Count").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI CountChinese = ItemSlotRectTransform.Find("CountChinese").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI ObjectName = ItemSlotRectTransform.Find("ObjectName").GetComponent<TextMeshProUGUI>();
+            ObjectName.text = item.GetName();
+            ObjectName.color = item.GetNameColor();
+            if (item.amount > 0)
             {
                 uitext.SetText(item.amount.ToString());
             }
@@ -85,7 +96,7 @@ public class UI_Inventory : MonoBehaviour
 
 
             x++;
-            if (x > 4)
+            if (x > 0)
             {
                 x = 0;
                 y--;

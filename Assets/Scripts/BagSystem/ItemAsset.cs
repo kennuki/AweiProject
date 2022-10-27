@@ -21,5 +21,10 @@ public class ItemAsset : MonoBehaviour
     public GameObject HealthPotion3D;
     public GameObject ManaPotion3D;
     public GameObject Crystal3D;
-    public GameObject OldLetter3D; 
+    public GameObject OldLetter3D;
+
+    public string HealthPotionText;
+    public string ManaPotionText;
+    public string CrystalText;
+    public string OldLetterText;
 }

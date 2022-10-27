@@ -5,19 +5,25 @@ using UnityEngine;
 public class BagAppear : MonoBehaviour
 {
     RectTransform recttransform;
-    void Update()
+    private void Start()
     {
         recttransform = this.GetComponent<RectTransform>();
+        recttransform.anchoredPosition = new Vector2(-998, -213);
+    }
+    void Update()
+    {
+        
     }
     public void OnBagIconHit()
     {
-        if(recttransform.anchoredPosition.x==0)
+        if(recttransform.anchoredPosition.x== -998)
         {
-            recttransform.anchoredPosition = new Vector2(1920, -540);
+            Debug.Log("");
+            recttransform.anchoredPosition = new Vector2(922, -213);
         }
         else
         {
-            recttransform.anchoredPosition = new Vector2(0, -540);
+            recttransform.anchoredPosition = new Vector2(-998, -213);
         }
     }
 }
