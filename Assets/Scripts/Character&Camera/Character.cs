@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
+    public static int OnMission = 0;
     public static int IsDialoged = 0;
     public static bool ActionProhibit = false;
+    public static bool ActionProhibitWithoutMove = false;
     public Animator anim1;
+    public static bool AttackGet = false;
+    public bool ThreeAttackGet = false;
     CharacterController controller;
     public Shoot shoot;
     void Start()
@@ -19,9 +23,12 @@ public class Character : MonoBehaviour
     }
     void FixedUpdate()
     {
-
         AccelerateFunction();
         if (Cursor.visible == false && ActionProhibit == false)
+        {
+            MoveFunction();
+        }
+        else if(ActionProhibitWithoutMove == true)
         {
             MoveFunction();
         }
@@ -41,19 +48,31 @@ public class Character : MonoBehaviour
     }
     private void Update()
     {
-        //Debug.Log(IsDialoged);
         AS = anim1.GetFloat("AS");
+        if (Input.GetKey(KeyCode.Mouse0)&&AttackGet==true)
+        {
+            anim1.SetInteger("AttackRepeat", 1);
+        }
+        else
+        {
+            anim1.SetInteger("AttackRepeat", 0);
+        }
         //GunShotRotation();
     }
-
     float speed = 6f;
     public static float imaangle;
     Vector3 move;
     public Vector3 dir,DirCache;
     float h;
     float j;
+    float a = 0;
     private void MoveFunction()
     {
+        a += Time.deltaTime;
+        if (a > 0 && a < 1)
+        {
+            anim1.SetBool("RunToIdle", false);
+        }
         h = Input.GetAxis("Horizontal");
         j = Input.GetAxis("Vertical");
         imaangle = transform.eulerAngles.y * Mathf.Deg2Rad;
@@ -73,7 +92,7 @@ public class Character : MonoBehaviour
         else if (anim1.GetBool("Dash") == false)
         {
 
-            if (Input.GetKey(KeyCode.Mouse0)&&Cursor.visible==false)
+            if (Input.GetKey(KeyCode.Mouse0)&&Cursor.visible==false&&AttackGet==true)
             {
                 j = 1;
                 jx = j * Mathf.Sin(imaangle);
@@ -86,13 +105,24 @@ public class Character : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
                 {
+                    anim1.SetBool("RunToIdle", false);
+                    a = 1;
                     anim1.SetBool("Run", true);
                     anim1.SetBool("Idle", false);
                     anim1.SetInteger("IdleState", 1);
                 }
                 else
                 {
-                    anim1.SetBool("Run", false);
+                    if (a >= 1)
+                    {
+                        anim1.SetBool("RunToIdle", true);
+                        a = -0.2f;
+                    }
+                    else
+                    {
+                        anim1.SetBool("Run", false);
+                    }
+
                 }
             }
 
@@ -119,6 +149,7 @@ public class Character : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.LeftShift)&&Cursor.visible==false)
                 {
+                    ActionProhibit = false;
                     StartCoroutine(BodySparkle(2, 0.55f));
                     DashTrail.Play();
                     anim1.SetBool("Dash", true);
@@ -202,8 +233,8 @@ public class Character : MonoBehaviour
     {
         if (anim1.GetLayerWeight(1) < 0.5)
         {
-            speed = 6f;
-            anim1.SetFloat("RunSpeed", 1f);
+            speed = 6.2f;
+            anim1.SetFloat("RunSpeed", 1.1f);
         }
         if (anim1.GetLayerWeight(1) >= 0.5)
         {
@@ -222,41 +253,50 @@ public class Character : MonoBehaviour
     {
         while (true)
         {
-            if (anim1.GetBool("Dash") == true)
+            while (AttackGet == true)
             {
-                yield return new WaitForSeconds(0.6f/AS);
-            }
-            SecondStrikeTrigger = false;
-            if (Input.GetKey(KeyCode.Mouse0) && anim1.GetBool("Attack2") == false && anim1.GetBool("Attack3") == false && Cursor.visible == false && ActionProhibit == false)
-            {
-
-                ShootAllow = 1;
-                anim1.SetBool("Attack", true);
-                anim1.SetInteger("IdleState", 1);
-                anim1.SetBool("Run", false);
-                StartCoroutine(GunSparkle(0));
-                SecondStrikeTrigger = true;
-                anim1.SetLayerWeight(2, 1);
-                StartCoroutine(Attack1Move(10/AS,4.5f*AS, 25f/AS));
-                StartCoroutine(NormalAttackSecondStrike(1,0.7f/AS));
-                for(float i=0; i<=0.9f/AS; i += 0.1f/AS)
+                if (anim1.GetBool("Dash") == true)
                 {
-                    if (anim1.GetBool("Dash") == true)
-                    {
-                        i = 0.9f / AS;
-                    }
-                    yield return new WaitForSeconds(0.1f/AS);
+                    yield return new WaitForSeconds(0.6f / AS);
                 }
-            }
-            else if (anim1.GetBool("Attack") == true)
-            {
-                anim1.SetBool("Attack", false);
+                SecondStrikeTrigger = false;
+                if (Input.GetKey(KeyCode.Mouse0) && anim1.GetBool("Attack2") == false && anim1.GetBool("Attack3") == false && Cursor.visible == false && ActionProhibit == false)
+                {
+                    MemoryItemManage.TakeItemState = 1;
+                    ShootAllow = 1;
+                    anim1.SetBool("Attack", true);
+                    anim1.SetInteger("IdleState", 1);
+                    anim1.SetBool("Run", false);
+                    StartCoroutine(GunSparkle(0));
+                    SecondStrikeTrigger = true;
+                    anim1.SetLayerWeight(2, 1);
+                    StartCoroutine(Attack1Move(2 / AS, 1f * AS, 30f / AS));
+                    StartCoroutine(NormalAttackSecondStrike(1, 0.7f / AS));
+                    for (float i = 0; i <= 0.75f / AS; i += 0.1f / AS)
+                    {
+                        if (anim1.GetBool("Dash") == true)
+                        {
+                            i = 0.8f / AS;
+                        }
+                        yield return new WaitForSeconds(0.1f / AS);
+                    }
+                }
+                else if (anim1.GetBool("Attack") == true)
+                {
+                    anim1.SetBool("Attack", false);
+                    if (Input.GetKey(KeyCode.Mouse0) == false)
+                    {
+                        AttackGet = false;
+                        yield return new WaitForSeconds(0.2f);
+                        AttackGet = true;
+                    }
+                }
+                yield return new WaitForEndOfFrame();
             }
             yield return new WaitForEndOfFrame();
         }
-
     }
-    private IEnumerator NormalAttackSecondStrike(int a,float waittime)
+    private IEnumerator NormalAttackSecondStrike(float a,float waittime)
     {
         if(true)
         {
@@ -281,14 +321,14 @@ public class Character : MonoBehaviour
                     anim1.SetBool("Attack2", true);
                     anim1.SetLayerWeight(2, 1);
                     StartCoroutine(GunSparkle(1));
-                    //StartCoroutine(Attack1Move(15f/AS,4f*AS, 0.6f/AS));
+                    StartCoroutine(Attack1Move(0,2f * AS, 20f / AS));
                     StartCoroutine(NormalAttackThirdStrike(1,0.5f/AS));
                     ThirdStrikeTrigger = true;
-                    for (float i = 0; i <= 0.9f / AS; i += 0.1f / AS)
+                    for (float i = 0; i <= 0.85f / AS; i += 0.1f / AS)
                     {
                         if (anim1.GetBool("Dash") == true)
                         {
-                            i = 0.9f / AS;
+                            i = 0.8f / AS;
                         }
                         yield return new WaitForSeconds(0.1f / AS);
                     }
@@ -298,6 +338,13 @@ public class Character : MonoBehaviour
             {
                 anim1.SetBool("Attack2", false);
                 ThirdStrikeTrigger = false;
+                anim1.SetLayerWeight(2, 0);
+                if (Input.GetKey(KeyCode.Mouse0) == false)
+                {
+                    AttackGet = false;
+                    yield return new WaitForSeconds(0.2f);
+                    AttackGet = true;
+                }
                 yield break;
             }
             else if(SecondStrikeTrigger == false)
@@ -312,7 +359,7 @@ public class Character : MonoBehaviour
     }
     private IEnumerator NormalAttackThirdStrike(int b, float waittime)
     {
-        if (true)
+        if (ThreeAttackGet == true)
         {
             if (anim1.GetBool("Dash") == true)
             {
@@ -320,7 +367,7 @@ public class Character : MonoBehaviour
             }
             yield return new WaitForSeconds(waittime);
         }
-        while (true)
+        while (ThreeAttackGet == true)
         {
             if (anim1.GetBool("Dash") == true)
             {
@@ -337,11 +384,11 @@ public class Character : MonoBehaviour
                     anim1.SetBool("Attack3", true);
                     anim1.SetLayerWeight(2, 1);
                     Instantiate(BulletShell, Leftgun.transform.position, Quaternion.Euler(0, 0, 0));
-                    for (float i = 0; i <= 1.1f / AS; i += 0.1f / AS)
+                    for (float i = 0; i <= 0.8f / AS; i += 0.1f / AS)
                     {
                         if (anim1.GetBool("Dash") == true)
                         {
-                            i = 1.1f / AS;
+                            i = 0.6f / AS;
                         }
                         yield return new WaitForSeconds(0.1f / AS);
                     }
@@ -365,13 +412,17 @@ public class Character : MonoBehaviour
 
     private IEnumerator Attack1Move(float offsetframe,float speed,float frame)
     {
-        for(int i =0;i<=frame;i++)
+        while(AttackGet == true || ActionProhibitWithoutMove == false)
         {
-            if (dir.magnitude > 0)
-            DirCache = dir.normalized;
-            if(i>offsetframe)
-            controller.Move(DirCache * speed *Time.deltaTime);
-            yield return new WaitForSeconds(0.01f);
+            for (int i = 0; i <= frame; i++)
+            {
+                if (dir.magnitude > 0)
+                    DirCache = dir.normalized;
+                if (i > offsetframe)
+                    controller.Move(DirCache * speed * Time.deltaTime);
+                yield return new WaitForSeconds(0.01f);
+            }
+            yield break;
         }
         yield break;
     }

@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class Pin : MonoBehaviour
 {
-    
+    public float AttackDamage = 0;
     void Start()
     {
-        StartCoroutine(RotateFunction(3f, 180));
+        StartCoroutine(RotateFunction(3.3f, 180));
         Destroy(this.gameObject, 5f);
     }
 
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            CharacterAbility.Damage += AttackDamage;
+            Destroy(this.gameObject);
+        }
+    }
 
     void FixedUpdate()
     {

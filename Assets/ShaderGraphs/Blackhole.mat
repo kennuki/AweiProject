@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Blackhole
+  m_Shader: {fileID: -6465566751694194690, guid: 727f742f4f0bf884a9e189ede0762599, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_dd39dd29f5a74c27b49e16fdfe4807d7:
+        m_Texture: {fileID: 2800000, guid: 035e604537ce6154a89a2ed2fb276d8f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Alpha: 1
+    - Vector1_145283fda03b4df98fb9d1c995689993: 1
+    - Vector1_3692337059fb437896eb35f689ca101b: 29.59
+    - Vector1_57fd39a0bbc04f6b9e36152d3471ca75: 0
+    - Vector1_5907b256e0954b64b48ea213281b7f37: -3.5
+    - Vector1_67450c469a9d4b229ef12ab2872ffc64: 27.7
+    - Vector1_a865949581414433b9073875dba2214d: 1
+    - Vector1_af82069a68b344699cedc2551dddcfb9: 1
+    - Vector1_cb324206225f401c99bd0f2bb7cd0095: 0
+    - _emission: 1
+    m_Colors:
+    - _Color: {r: 0.137816, g: 0.1440303, b: 0.1792453, a: 0}
+    - _EmissionColor: {r: 0.1802243, g: 0.3863149, b: 0.509434, a: 0}
+  m_BuildTextureStacks: []

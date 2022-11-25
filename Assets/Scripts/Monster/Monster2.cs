@@ -6,47 +6,107 @@ using UnityEngine.AI;
 public class Monster2 : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
+        anim = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         agent.isStopped = false;
         cd = this.GetComponent<Collider>();
+
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         AIFunction();
+
+        
     }
 
-
+    protected Animator anim;
     public Transform PlayerTransform;
-    int State = 0;
-    private void AIFunction()
+    protected int State = 0;
+    protected NavMeshAgent agent;
+    protected Collider cd;
+    public Vector3 ran;
+    protected float theta;
+    protected float r = 10;
+    protected float ran_x;
+    protected float ran_y;
+    protected float ran_CD = 5;
+    public float ChasingSpeed;
+    public virtual void Patrol(float idletime)
+    {
+        ran_CD += Time.deltaTime;
+
+        if (ran_CD >= 7)
+        {
+            theta = Random.Range(0, Mathf.PI * 2);
+            ran_x = Mathf.Cos(theta) * r;
+            ran_y = Mathf.Sin(theta) * r;
+            ran_CD = Random.Range(0f, 3.0f);
+            ran = transform.position + (new Vector3(ran_x, 0, ran_y));
+        }
+        else if (ran_CD < idletime)
+        {
+            anim.SetInteger("State", 0);
+            agent.speed = 0;
+        }
+        else
+        {
+            anim.SetInteger("State", 1);
+            agent.speed = 1.5f;
+        }
+        agent.SetDestination(ran);
+    }
+    public virtual void Chasing(float v)
+    {
+        anim.SetInteger("State", 1);
+        agent.speed = v;
+        agent.SetDestination(PlayerTransform.transform.position);
+    }
+    public virtual void Stop()
+    {
+        anim.SetInteger("State", 0);
+        agent.speed = 0;
+    }
+    public virtual void Attack1()
+    {
+        anim.SetInteger("State", 2);
+    }
+    public virtual void Escape()
+    {
+
+        Vector3 dir = transform.position - PlayerTransform.transform.position;
+        agent.speed = 4f;
+        agent.SetDestination(transform.position + dir * 3f);
+    }
+    public virtual void AIFunction()
     {
         Vector3 playerPos = PlayerTransform.transform.position;
         Vector3 MyPos = transform.position;
         if (State == 0)
         {
-            Patrol();
-            if (Vector3.Distance(playerPos, MyPos) < 10)
+            Patrol(2);
+            if (Vector3.Distance(playerPos, MyPos) < 13)
             {
                 State = 1;
             }
         }
         if (State == 1)
         {
-            if (Vector3.Distance(playerPos, MyPos) > 10)
+            if (Vector3.Distance(playerPos, MyPos) >= 13)
             {
+                ran_CD = 0;
                 State = 0;
             }
-            else if (Vector3.Distance(playerPos, MyPos) < 2.5f)
+            else if (Vector3.Distance(playerPos, MyPos) < 13f && Vector3.Distance(playerPos, MyPos) > 2.2f)
             {
-                Chasing(0);
+                Chasing(ChasingSpeed);
             }
             else
             {
-                Chasing(2);
+                Stop();
             }
             /*if(Vector3.Distance(playerPos,MyPos)<10)
             {
@@ -73,60 +133,5 @@ public class Monster2 : MonoBehaviour
                 State = 0;
             }
         }
-    }
-    NavMeshAgent agent;
-    Collider cd;
-    public Vector3 ran;
-    float theta;
-    float r = 10;
-    float ran_x;
-    float ran_y;
-    float ran_CD = 5;
-    void Patrol()
-    {
-
-        ran_CD += Time.deltaTime;
-        agent.speed = 2f;
-        if (ran_CD >= 5)
-        {
-            theta = Random.Range(0, Mathf.PI * 2);
-            ran_x = Mathf.Cos(theta) * r;
-            ran_y = Mathf.Sin(theta) * r;
-            ran_CD = 0;
-            ran = transform.position + (new Vector3(ran_x, 0, ran_y));
-        }
-        agent.SetDestination(ran);
-    }
-    void Chasing(float v)
-    {
-
-        agent.speed = v;
-        agent.SetDestination(PlayerTransform.transform.position);
-    }
-    void Chasing2(float v)
-    {
-
-        Vector3 dir = transform.position - PlayerTransform.transform.position;
-        agent.speed = v;
-        agent.SetDestination(transform.position + dir * 3f);
-    }
-    /*void Shooting()
-    {
-        //攻擊
-        shoot_CD+=Time.deltaTime;
-        agent.speed=1f;
-        agent.SetDestination(player.transform.position);
-        if(shoot_CD>=0.5f)
-        {
-        Instantiate(bullet,emission.transform.position,emission.transform.rotation);
-        shoot_CD=0;
-        }
-    }*/
-    void Escape()
-    {
-
-        Vector3 dir = transform.position - PlayerTransform.transform.position;
-        agent.speed = 4f;
-        agent.SetDestination(transform.position + dir * 3f);
     }
 }

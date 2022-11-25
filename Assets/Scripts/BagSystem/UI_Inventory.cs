@@ -74,8 +74,30 @@ public class UI_Inventory : MonoBehaviour
             TextMeshProUGUI uitext = ItemSlotRectTransform.Find("Count").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI CountChinese = ItemSlotRectTransform.Find("CountChinese").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI ObjectName = ItemSlotRectTransform.Find("ObjectName").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI ObjectInfo = image.GetComponentInChildren<TextMeshProUGUI>();
+            TextMeshProUGUI ObjectAdvanceInfo = image.transform.Find("ObjectAdvanceInfo").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI TakeButton = image.transform.Find("ObjectUse").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI MemoryObject3DName = image.transform.Find("3DObjectName").GetComponent<TextMeshProUGUI>();
             ObjectName.text = item.GetName();
             ObjectName.color = item.GetNameColor();
+            ObjectInfo.text = item.GetInfo();
+            MemoryObject3DName.text = item.Get3DMemoryObjectName();
+            if(item.MemoryItem() == true)
+            {
+                if(item.GetMissionComplete() == true)
+                {
+                    ObjectAdvanceInfo.text = item.GetAdvamceInfo();
+                    TakeButton.text = "false";
+                }
+                else
+                {
+                    TakeButton.text = "true";
+                }
+            }
+            else
+            {
+                TakeButton.text = "false";
+            }
             if (item.amount > 0)
             {
                 uitext.SetText(item.amount.ToString());

@@ -6,14 +6,17 @@ using UnityEngine.UI;
 
 public class CameraRotation : MonoBehaviour
 {
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         cameratotate = true;
-        BagIcon.SetActive(false);
-        rect.anchoredPosition = new Vector2(0, -540);
+        BagIcon.SetActive(true);
+        BagIcon2.SetActive(false);
+        rect.anchoredPosition = new Vector2(-998, -213);
+        //rect.anchoredPosition = new Vector2(0, -540);
         StartCoroutine(LockCursorToMiddle());
         StartCoroutine(CameraObstacleInteraction());
     }
@@ -32,12 +35,12 @@ public class CameraRotation : MonoBehaviour
     {
 
     }
-
+    public CloseGame closeGame;
+    public bool state = false;
     bool cameratotate = true;
     private IEnumerator LockCursorToMiddle()
     {
         float waittime;
-        bool state = false;
         while (true)
         {
             state = !state;
@@ -46,9 +49,10 @@ public class CameraRotation : MonoBehaviour
                 waittime = 0f;
                 state = false;
             }
-            else if (state)
+            else if (state==true&&closeGame.ExcOn==false)
             {
                 Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
                 va2 = Vector2.zero;
                 vt2 = vn2;
                 //vt2 = new Vector2(0.4992765f, 0.5012655f);
@@ -64,30 +68,62 @@ public class CameraRotation : MonoBehaviour
         }
     }
 
-
     public GameObject BagIcon;
+    public GameObject BagIcon2;
     public RectTransform rect;
     private void CursorHide()
     {
-        if (Input.GetKeyDown(KeyCode.LeftAlt) && cameratotate == false)
+        if (Input.GetKeyDown(KeyCode.B) && cameratotate == false)
         { 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             cameratotate = true;
-            BagIcon.SetActive(false);
+            BagIcon.SetActive(true);
+            BagIcon2.SetActive(false);
             rect.anchoredPosition = new Vector2(-998, -213);
         }
-        else if (Input.GetKeyDown(KeyCode.LeftAlt) && cameratotate == true)
+        else if (Input.GetKeyDown(KeyCode.B) && cameratotate == true)
         {
    
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             cameratotate = false;
-            BagIcon.SetActive(true);
+            BagIcon.SetActive(false);
+            BagIcon2.SetActive(true);
+            rect.anchoredPosition = new Vector2(922, -213);
         }
     }
+    public void OnTakeButtonHit()
+    {
 
-
+        if (cameratotate == false)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            cameratotate = true;
+            BagIcon.SetActive(true);
+            BagIcon2.SetActive(false);
+            rect.anchoredPosition = new Vector2(-998, -213);
+        }
+        else if (cameratotate == true)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            cameratotate = false;
+            BagIcon.SetActive(false);
+            BagIcon2.SetActive(true);
+            rect.anchoredPosition = new Vector2(922, -213);
+        }
+    }
+    public void OnBagIconBackHit()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        cameratotate = true;
+        BagIcon.SetActive(true);
+        BagIcon2.SetActive(false);
+        rect.anchoredPosition = new Vector2(-998, -213);
+    }
     public CinemachineVirtualCamera CM1;
     public GameObject LookPoint;
     public GameObject PlayerRotate2;
@@ -177,7 +213,7 @@ public class CameraRotation : MonoBehaviour
         while (true)
         {
             float MaxRange = Vector3.Distance(LookPoint.transform.position, transform.position);
-            Debug.DrawLine(LookPoint.transform.position, transform.position,Color.green);
+            //Debug.DrawLine(LookPoint.transform.position, transform.position,Color.green);
             //float MaxRange = Vector3.Distance(transform.position, PlayerRotate.transform.position);
             float CameraXAngle = this.transform.eulerAngles.x;
             if (CameraXAngle > 180)

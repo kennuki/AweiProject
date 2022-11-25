@@ -6,7 +6,7 @@ public class PlayerBag : MonoBehaviour
 {
     public Animator anim;
     [SerializeField] private UI_Inventory uI_Inventory;
-    private Inventory inventory;
+    public Inventory inventory;
     private void Awake()
     {
         StartCoroutine(TDelay());
@@ -45,7 +45,7 @@ public class PlayerBag : MonoBehaviour
             if (item.itemType == Item.ItemType.HealthPotion && item.amount > 0)
             {
                 inventory.UseItem(new Item { itemType = Item.ItemType.HealthPotion, amount = 1 });
-                CA.HP += 10;
+                CA.HP += CA.MaxHP * 0.3f;
             }               
         }
 
@@ -57,7 +57,7 @@ public class PlayerBag : MonoBehaviour
             if (item.itemType == Item.ItemType.ManaPotion && item.amount > 0)
             {
                 inventory.UseItem(new Item { itemType = Item.ItemType.ManaPotion, amount = 1 });
-                CA.HP += 10;
+                CA.MP += CA.MaxMP * 0.3f;
             }
         }
     }
@@ -76,28 +76,44 @@ public class PlayerBag : MonoBehaviour
     }
     private void UsePotion()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             foreach (Item item in inventory.GetItemList())
             {
                 if (item.itemType == Item.ItemType.HealthPotion && item.amount > 0)
                 {
                     inventory.UseItem(new Item { itemType = Item.ItemType.HealthPotion, amount = 1 });
-                    CA.HP += 10;
+                    CA.HP += CA.MaxHP * 0.3f;
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.X))
         {
             foreach (Item item in inventory.GetItemList())
             {
                 if (item.itemType == Item.ItemType.ManaPotion && item.amount > 0)
                 {
                     inventory.UseItem(new Item { itemType = Item.ItemType.ManaPotion, amount = 1 });
-                    CA.HP += 10;
+                    CA.MP += CA.MaxMP * 0.3f;
                 }
             }
         }
+    }
+    int targetindex;
+    Item targetitem;
+    public void GetTargetItemOnTop(Item.ItemType type)
+    {
+        int listcount = inventory.GetItemList().Count;
+        foreach (Item item in inventory.GetItemList())
+        {
+            if (item.itemType == type)
+            {
+                targetindex = inventory.GetItemList().IndexOf(item);
+                targetitem = item;
+            }
+        }
+        if (listcount != 0 && targetitem != null)
+            inventory.SetItemToIndex0(targetitem, targetindex);
     }
     private IEnumerator TDelay()
     {

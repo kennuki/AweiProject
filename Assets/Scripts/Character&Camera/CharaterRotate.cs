@@ -14,7 +14,15 @@ public class CharaterRotate : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        RotateFunction();
+        if (Character.ActionProhibit != true)
+        {
+            RotateFunction();
+        }
+        else if (Character.ActionProhibitWithoutMove == true)
+        {
+            RotateFunction();
+        }
+
     }
 
     float faceAngle;

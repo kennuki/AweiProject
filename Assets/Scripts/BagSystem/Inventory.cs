@@ -61,7 +61,11 @@ public class Inventory
         }
         OnItemListChanged?.Invoke(this, EventArgs.Empty);
     }
-
+    public void SetItemToIndex0(Item item,int OriginIndex)
+    {
+        itemlist.Remove(itemlist[OriginIndex]);
+        itemlist.Insert(0, item);
+    }
 
 
     public List<Item> GetItemList()

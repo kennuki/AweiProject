@@ -27,7 +27,7 @@ public class EnemyHPBar : MonoBehaviour
     void UpdatePosition()
     {
         Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(Target.transform.position);
-        Vector3 offset = new Vector3(0, 95, 0);
+        Vector3 offset = new Vector3(0, 145, 0);
         transform.position = enemyScreenPos + offset;
     }
 
@@ -41,14 +41,13 @@ public class EnemyHPBar : MonoBehaviour
             Bar.rectTransform.localScale.z);
         if (TargetHedgehog.HP <= 0)
         {
-            Debug.Log("?");
             Destroy(this.gameObject);
         }
     }
     void imagetocanvas()
     {
         //”cimage•ú“žcanvasã
-        canvas = GameObject.Find("Canvas");
+        canvas = GameObject.Find("Canvas2");
         transform.SetParent(canvas.transform);
     }
 }

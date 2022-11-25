@@ -21,14 +21,15 @@ public class GunAppear : MonoBehaviour
     public GameObject Gun;
     bool IfGunHided = true;
     bool InActive = false;
+    float t = 0;
     private IEnumerator GunHide()
     {
-        float t = 0;
         while (true)
         {
             InActive = false;
-            if (IfGunHided == true && Input.GetKeyDown(KeyCode.X) && Cursor.visible == false|| IfGunHided == true && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false)
+            if (IfGunHided == true && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || IfGunHided == true && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false && Character.ActionProhibit == false && Character.AttackGet == true)
             {
+                MemoryItemManage.TakeItemState = 1;
                 InActive = true;
                 t = 0;
                 Gun.SetActive(true);
@@ -39,15 +40,16 @@ public class GunAppear : MonoBehaviour
                 StartCoroutine(FadeInFunction());
                 yield return new WaitForSeconds(1.2f);
             }
-            else if (IfGunHided == false && Input.GetKeyDown(KeyCode.X) && Cursor.visible == false||t>80)
+            else if (IfGunHided == false && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || t > 12)
             {
+                MemoryItemManage.TakeItemState = 0;
                 t = 0;
                 IfGunHided = true;
                 GunAppearEffect[2].Play();
                 StartCoroutine(FadeOutFunction());
                 yield return null;
             }
-            else if (IfGunHided == false && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false)
+            else if (IfGunHided == false && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false && Character.AttackGet == true)
             {
                 t = 0;
             }
@@ -86,6 +88,17 @@ public class GunAppear : MonoBehaviour
                 Gun.SetActive(false);
             }
             yield return null;
+        }
+    }
+    public void OnTakedBottonHit()
+    {
+        if (IfGunHided == false && Cursor.visible == false)
+        {
+            MemoryItemManage.TakeItemState = 2;
+            t = 0;
+            IfGunHided = true;
+            GunAppearEffect[2].Play();
+            StartCoroutine(FadeOutFunction());
         }
     }
 }

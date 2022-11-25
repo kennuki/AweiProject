@@ -6,17 +6,21 @@ public class HedgeHogAbility : MonsterAbility
 {
     public Animator animator;
     public GameObject parent;
-    int i = 0;
-
-    // Update is called once per frame
-    void Update()
+    protected Rigidbody rig;
+    protected void Start()
+    {
+        ImaHP = HP;
+        rig = parent.GetComponent<Rigidbody>();
+    }
+    protected int i = 0;
+    protected void Update()
     {
         if (HP <= 0)
         {
             i++;
             if (i == 1)
             {
-                StartCoroutine(SpawnCrystal());
+                StartCoroutine(SpawnItem(itemTypes,ItemAmount,amount));
                 i++;
             }
             Destroy(parent,0.1f);
@@ -30,12 +34,11 @@ public class HedgeHogAbility : MonsterAbility
     {
         if (other.tag == "Bullet")
         {
-            Debug.Log(CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1));
+            StartCoroutine(DecayedForce(100, 150));
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1);
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
-            animator.SetBool("Idle", false);
-            StartCoroutine(TimeCount(0.2f));
+            StartCoroutine(TimeCount(0.5f));
 
         }
         if (other.tag == "Bullet2")
@@ -43,8 +46,7 @@ public class HedgeHogAbility : MonsterAbility
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1)*1.5f;
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
-            animator.SetBool("Idle", false);
-            StartCoroutine(TimeCount(0.2f));
+            StartCoroutine(TimeCount(0.5f));
         }
     }
 
@@ -55,17 +57,32 @@ public class HedgeHogAbility : MonsterAbility
 
     }
 
+    public IEnumerator DecayedForce(float force,float decayedspeed)
+    {
+        Quaternion q = Quaternion.Euler(transform.eulerAngles);
+        Vector3 f = new Vector3(0, 0, -force);
+        Vector3 TargetForce = q * f;
+        rig.AddForce(TargetForce);
+        for(float i = 0; i < force; i += Time.deltaTime* decayedspeed)
+        {
+            rig.AddForce(TargetForce.normalized * -Time.deltaTime * decayedspeed);
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+        rig.velocity = Vector3.zero;
+        yield break;
+    }
+
     public void HitAnime()
     {
         animator.SetBool("Hit", false);
-        animator.SetBool("Idle", true);
     }
 
     public bool deadbydaylight = false;
-    void DistanceToPlayer()
+    public float ShowHPDistance=18;
+    protected void DistanceToPlayer()
     {
         float dist = Vector3.Distance(CA.transform.position, transform.position);
-        if (dist < 20)
+        if (dist < ShowHPDistance)
         {
             deadbydaylight = true;
         }
@@ -78,12 +95,7 @@ public class HedgeHogAbility : MonsterAbility
     public static float HitNum;
     public float ImaHP;
     public GameObject ShowHit;
-    void Start()
-    {
-        ImaHP = HP;
-
-    }
-    void HitFunction()
+    protected void HitFunction()
     {
         if (ImaHP != HP)
         {
@@ -93,13 +105,18 @@ public class HedgeHogAbility : MonsterAbility
 
         }
     }
-    private IEnumerator SpawnCrystal()
+    public Item.ItemType[] itemTypes;
+    public int[] ItemAmount;
+    public int amount;
+    public virtual IEnumerator SpawnItem(Item.ItemType[] itemTypes_, int[] ItemAmount_,int amount)
     {
-        for (int i = 0; i < Random.Range(5,10); i++)
+        for(int i = 0; i < amount; i++)
         {
-            ItemWorld.SpawnItemWorld(transform.position, new Item { itemType = Item.ItemType.Crystal, amount = 1 });
+            for (int j = 0; j < ItemAmount_[i]; j++)
+            {
+                ItemWorld.SpawnItemWorld(transform.position+new Vector3(1f*Mathf.Sin(Random.Range(0f,360f)*Mathf.Deg2Rad)*Random.Range(0f,1f),0.5f, 1f * Mathf.Sin(Random.Range(0f, 360f) * Mathf.Deg2Rad) * Random.Range(0f, 1f)), new Item { itemType = itemTypes_[i], amount = 1 });
+            }
             yield return new WaitForFixedUpdate();
         }
-
     }
 }

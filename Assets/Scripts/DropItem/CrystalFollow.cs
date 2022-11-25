@@ -16,7 +16,7 @@ public class CrystalFollow : MonoBehaviour
     {
         rb = this.GetComponent<Rigidbody>();
         Player = GameObject.Find("Character");
-       character = Character.FindObjectOfType<Character>();
+        character = Character.FindObjectOfType<Character>();
         fly = new Vector3(Random.Range(-5f, 5f), 2, Random.Range(-5f, 5f));
         rb.velocity = fly * 0.1f;
         StartCoroutine(TimeDelay());
@@ -26,8 +26,8 @@ public class CrystalFollow : MonoBehaviour
     void FixedUpdate()
     {
 
-        rsp += Time.deltaTime * 250;
-        rb.transform.rotation = Quaternion.Euler(0, rsp, 0);
+        rsp += Time.deltaTime * 350;
+        rb.transform.rotation = Quaternion.Euler(-90, 0, rsp);
 
         if (eaeaea == true)
         {
@@ -35,7 +35,7 @@ public class CrystalFollow : MonoBehaviour
             {
                 Vector3 wp = Player.transform.position;
                 Vector3 sp = rb.transform.position;
-                Vector3 p = (wp - sp) * 1.8f;
+                Vector3 p = (wp - sp + new Vector3(0.1f, 0.1f, 0.1f)) * 1.8f;
                 if (p.x != 0 && p.y != 0)
                 {
                     rb.velocity=new Vector3(p.x,p.y,p.z);

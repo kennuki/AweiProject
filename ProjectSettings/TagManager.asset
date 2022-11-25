@@ -11,6 +11,8 @@ TagManager:
   - Pin
   - Bullet
   - Bullet2
+  - Pin2
+  - Memory
   layers:
   - Default
   - TransparentFX

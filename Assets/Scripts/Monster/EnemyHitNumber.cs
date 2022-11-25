@@ -21,13 +21,13 @@ public class EnemyHitNumber : MonoBehaviour
     void UpdatePosition()
     {
             Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(transform.position);
-            Vector3 offset = new Vector3(1 + RandonPosition.x, 100 + RandonPosition.y, 0);
+            Vector3 offset = new Vector3(1 + RandonPosition.x, 150 + RandonPosition.y, 0);
             transform.position = enemyScreenPos + offset;
     }
     void imagetocanvas()
     {
         //îcimageï˙ìûcanvasè„
-        canvas = GameObject.Find("Canvas");
+        canvas = GameObject.Find("Canvas2");
         transform.SetParent(canvas.transform);
     }
 }

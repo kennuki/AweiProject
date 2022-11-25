@@ -4,29 +4,52 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    Renderer bt;
-
+    public ParticleSystem ExplodeMonster;
+    public ParticleSystem ExplodeWall;
+    private Collider cd;
     void Start()
     {
         Vector3 dir = Shoot.ShootDir;
-        bt = GetComponent<Renderer>();
-        
-        Destroy(gameObject, 1.4f);
+        cd = GetComponent<Collider>();
+        Destroy(gameObject, 0.5f);
     }
-    float t;
+    float speed = -45f;
     void Update()
     {
-        t += Time.deltaTime;
-        transform.Translate(-45f * Time.deltaTime, 0, 0);
-        bt.material.color = new Color(bt.material.color.r, bt.material.color.g, bt.material.color.b, 1 - t);
+        transform.Translate(speed*Time.deltaTime, 0, 0);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Monster")
         {
-            Destroy(this.gameObject);
+            ExplodeMonster.gameObject.transform.SetParent(null);
+            ExplodeMonster.gameObject.SetActive(true);
+            ExplodeMonster.Play();
+            Destroy(cd);
+            Destroy(this.gameObject,0.1f);
+            Destroy(ExplodeMonster.gameObject, 0.2f);
+        }
+        else if (other.tag == "Wall"|| other.tag == "Floor")
+        {
+            ExplodeWall.gameObject.transform.SetParent(null);
+            ExplodeWall.gameObject.SetActive(true);
+            ExplodeWall.Play();
+            Destroy(this.gameObject, 0.1f);
+            Destroy(ExplodeWall.gameObject, 0.2f);
         }
 
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Wall")
+        {
+            ExplodeWall.gameObject.transform.DetachChildren();
+            ExplodeWall.gameObject.SetActive(true);
+            ExplodeWall.Play();
+            Destroy(cd);
+            Destroy(this.gameObject, 0.1f);
+            Destroy(ExplodeWall.gameObject, 0.1f);
+        }
     }
 }
