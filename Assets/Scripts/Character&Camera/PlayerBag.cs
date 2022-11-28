@@ -7,10 +7,10 @@ public class PlayerBag : MonoBehaviour
     public Animator anim;
     [SerializeField] private UI_Inventory uI_Inventory;
     public Inventory inventory;
+    public Character character;
     private void Awake()
     {
         StartCoroutine(TDelay());
-
        // ItemWorld.SpawnItemWorld(new Vector3(0,0,0), new Item { itemType = Item.ItemType.HealthPotion, amount = 1 });
     }
 
@@ -28,15 +28,13 @@ public class PlayerBag : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collider)
     {
-
         ItemWorld itemWorld = collider.GetComponentInParent<ItemWorld>();
-        if(itemWorld != null)
+        if (itemWorld != null)
         {
             inventory.AddItem(itemWorld.GetItem());
             itemWorld.DestroySelf();
         }
     }
-    Item item;
     public CharacterAbility CA;
     public void OnClickHPPotion()
     {
@@ -63,14 +61,21 @@ public class PlayerBag : MonoBehaviour
     }
     public void OnClickSkill1()
     {
-        foreach (Item item in inventory.GetItemList())
+
+        if (character.skills[1].skillstate == 0)
         {
-            if (item.itemType == Item.ItemType.Crystal && item.amount >= 15)
+            foreach (Item item in inventory.GetItemList())
             {
-                inventory.UseItem(new Item { itemType = Item.ItemType.Crystal, amount = 15 });
-                CA.AS = 2;
-                anim.SetFloat("AS", 2);
+                if (item.itemType == Item.ItemType.Crystal && item.amount >= 15)
+                {
+                    inventory.UseItem(new Item { itemType = Item.ItemType.Crystal, amount = 15 });
+                }
             }
+            ItemAsset.Instance.SpeedMask1.SetActive(false);
+            ItemAsset.Instance.SpeedMask2.SetActive(false);
+            ItemAsset.Instance.UpgradeAccelerate.SetActive(false);
+            ItemAsset.Instance.AccelerateIcon.SetActive(true);
+            character.skills[1].skillstate = 1;
         }
 
     }

@@ -111,13 +111,13 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _emission: 0.951641
+    - _emission: 0.61544037
     m_Colors:
     - Vector3_e863a457d9a84ae0a9da0ba0cd5c2862: {r: 0.137816, g: 0.1440303, b: 0.1792453, a: 0}
     - Vector4_93d07f6d01014d8b8df09e1d76c0f8c6: {r: 0.07058824, g: 0.07843138, b: 0.1333333, a: 0}
     - _BaseColor: {r: 0.19435313, g: 0.20689571, b: 0.2690152, a: 1}
     - _Color: {r: 0.1802243, g: 0.3863149, b: 0.509434, a: 0.99361676}
-    - _EmissionColor: {r: 0.18018512, g: 0.38637042, b: 0.509549, a: 1}
+    - _EmissionColor: {r: 0.18022186, g: 0.3863184, b: 0.50944114, a: 1}
     - _EmissionColr: {r: 0.1802243, g: 0.3863149, b: 0.509434, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

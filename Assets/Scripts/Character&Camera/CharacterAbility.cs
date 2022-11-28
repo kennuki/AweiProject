@@ -34,6 +34,7 @@ public class CharacterAbility : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        AS = anim.GetFloat("AS");
         if (Input.GetKeyDown(KeyCode.T))
         {
             Time.timeScale = gametime;
@@ -47,7 +48,7 @@ public class CharacterAbility : MonoBehaviour
             Damage = 0;
         }
     }
-
+    public Scene2trigger Scene2Trigger;
     public GameObject GameOverPanel;
     private IEnumerator dead()
     {
@@ -67,6 +68,7 @@ public class CharacterAbility : MonoBehaviour
                 {
                     if (Input.GetKey(KeyCode.Mouse0))
                     {
+
                         MemoryItemManage.TeddyMission = false;
                         Character.ActionProhibit = false;
                         Character.IsDialoged = 0;

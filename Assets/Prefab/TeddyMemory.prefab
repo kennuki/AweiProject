@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4737059766770813312}
   - component: {fileID: 8508057636500162085}
   - component: {fileID: 5905985056714044143}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Teddy
   m_TagString: Memory
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 3016553764437492407}
   - component: {fileID: 1696857933013977280}
   - component: {fileID: 8436928455256143381}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: TeddyMemory
   m_TagString: Memory
   m_Icon: {fileID: 0}

@@ -5,20 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class Scene2trigger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            SceneManager.LoadScene(2);
-        }
-    }
+    public Character character;
+    public SaveMeDestroyAllChild[] saveMeDestroyAllChildren;
+    public SaveMeInactive[] saveMeInactives;
+    public static bool LevelClear = false;
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "player")
@@ -26,4 +16,33 @@ public class Scene2trigger : MonoBehaviour
             SceneManager.LoadScene(2);
         }
     }
+    private void Start()
+    {
+        StartCoroutine(Load2Scene());
+    }
+    public IEnumerator Load2Scene()
+    {
+        while (true)
+        {
+            if (Input.GetKey(KeyCode.L))
+            {
+                LevelClear = true;
+                foreach (SaveMeDestroyAllChild saveMeDestroyAllChild in saveMeDestroyAllChildren)
+                {
+                    saveMeDestroyAllChild.DestroyAllChild();
+                }
+                foreach(SaveMeInactive saveMeInactive in saveMeInactives)
+                {
+                    saveMeInactive.SetChildInActive();
+                }
+                yield return new WaitForSeconds(1f);
+                SceneManager.sceneLoaded += character.OnSceneLoaded;
+                LevelClear = false;
+                SceneManager.LoadScene(2);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+
+    }
+
 }

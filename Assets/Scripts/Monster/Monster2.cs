@@ -5,20 +5,23 @@ using UnityEngine.AI;
 
 public class Monster2 : MonoBehaviour
 {
-    // Start is called before the first frame update
     protected virtual void Start()
     {
         anim = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         agent.isStopped = false;
         cd = this.GetComponent<Collider>();
+        HedgeHogAbility = GetComponentInChildren<HedgeHogAbility>();
 
     }
-
+    public HedgeHogAbility HedgeHogAbility;
     // Update is called once per frame
     protected virtual void Update()
     {
-        AIFunction();
+        if (HedgeHogAbility.Bump == false)
+        {
+            AIFunction();
+        }
 
         
     }

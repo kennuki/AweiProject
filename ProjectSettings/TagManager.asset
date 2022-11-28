@@ -13,6 +13,8 @@ TagManager:
   - Bullet2
   - Pin2
   - Memory
+  - UnderWater
+  - Kick
   layers:
   - Default
   - TransparentFX
@@ -25,10 +27,10 @@ TagManager:
   - Camera
   - Monster
   - Crystal
-  - 
-  - 
-  - 
-  - 
+  - NoPost
+  - UnderWater
+  - Skill
+  - Item
   - 
   - 
   - 

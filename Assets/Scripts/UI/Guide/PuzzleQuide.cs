@@ -32,22 +32,33 @@ public class PuzzleQuide : MonoBehaviour
     {
     }
     int step = 0;
+    GameObject icon;
+    GameObject dialog;
     private IEnumerator PuzzleGuideFunction()
     {
         Character.OnMission = 1;
         step = 0;
+
         while (step == 0)
         {
-            Time.timeScale = 0f;
-            BlackPanel.SetActive(true);
-            Character.ActionProhibit = true;
-            GameObject icon = Instantiate(BagIcon, BlackPanel.transform, true);
-            GameObject dialog = Instantiate(CanvaDialog, BlackPanel.transform, true);
-            dialog.SetActive(true);
-            text1 = dialog.GetComponentInChildren<TextMeshProUGUI>();
-            text1.color = new Vector4(0.73f, 0.74f, 0.96f, 1);
-            text1.text = "按B點開背包後並點擊\"拿取\"鈕!";
-            step = 1;
+            if (MemoryItemManage.TeddyMission == true)
+            {
+                step = 6;
+                Character.ActionProhibit = true;
+            }
+            else
+            {
+                Time.timeScale = 0f;
+                BlackPanel.SetActive(true);
+                Character.ActionProhibit = true;
+                icon = Instantiate(BagIcon, BlackPanel.transform, true);
+                dialog = Instantiate(CanvaDialog, BlackPanel.transform, true);
+                dialog.SetActive(true);
+                text1 = dialog.GetComponentInChildren<TextMeshProUGUI>();
+                text1.color = new Vector4(0.73f, 0.74f, 0.96f, 1);
+                text1.text = "按B點開背包後並點擊\"拿取\"鈕!";
+                step = 1;
+            }
             while (step == 1)
             {
                 if (Input.GetKey(KeyCode.B))
@@ -105,6 +116,7 @@ public class PuzzleQuide : MonoBehaviour
                     BlackPanel.SetActive(false);
                     step = 6;
                     Character.ActionProhibitWithoutMove = false;
+                    Character.ActionProhibit = true;
                 }
                 yield return new WaitForEndOfFrame();
             }
@@ -116,9 +128,7 @@ public class PuzzleQuide : MonoBehaviour
                 }
                 yield return new WaitForEndOfFrame();
             }
-            Character.ActionProhibit = false;
-            yield return new WaitForSeconds(3.5f);
-
+            yield return new WaitForSeconds(2f);
             Description.SetActive(true);
             foreach (GameObject trigger in nexttrigger)
             {

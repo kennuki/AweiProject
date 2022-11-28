@@ -97,7 +97,7 @@ public class Item
     {
         switch (itemType)
         {
-            default:
+            default: return false;
             case ItemType.OldLetter: return MemoryItemManage.OldLetterMission;
             case ItemType.Teddy: return MemoryItemManage.TeddyMission;
         }

@@ -27,11 +27,11 @@ public class CharaterRotate : MonoBehaviour
 
     float faceAngle;
     Quaternion targetRotation;
-    private void RotateFunction()
+    public void RotateFunction()
     {
         float h = Input.GetAxis("Horizontal") ;
         float j = Input.GetAxis("Vertical");
-        if (anim1.GetBool("Attack") == true || anim1.GetBool("Attack2") == true || anim1.GetBool("Attack3") == true)
+        if (anim1.GetBool("Attack") == true || anim1.GetBool("Attack2") == true || anim1.GetBool("Attack3") == true || anim1.GetInteger("SkillState")>=2)
         {
             h = 0;
             j = 0;
@@ -50,7 +50,7 @@ public class CharaterRotate : MonoBehaviour
         {
 
         }
-        else if (anim1.GetBool("Attack") == true || anim1.GetBool("Attack2") == true || anim1.GetBool("Attack3") == true)
+        else if (anim1.GetBool("Attack") == true || anim1.GetBool("Attack2") == true || anim1.GetBool("Attack3") == true || anim1.GetInteger("SkillState") >= 2)
         {
             faceAngle = Mathf.Atan2(h, j) * Mathf.Rad2Deg;
             targetRotation = Quaternion.Euler(0, faceAngle+5 + Character.imaangle * Mathf.Rad2Deg, 0);

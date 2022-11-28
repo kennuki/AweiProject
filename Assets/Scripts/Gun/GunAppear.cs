@@ -15,7 +15,7 @@ public class GunAppear : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
 
     public GameObject Gun;
@@ -27,7 +27,7 @@ public class GunAppear : MonoBehaviour
         while (true)
         {
             InActive = false;
-            if (IfGunHided == true && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || IfGunHided == true && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false && Character.ActionProhibit == false && Character.AttackGet == true)
+            if (IfGunHided == true && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || IfGunHided == true && Input.GetKey(KeyCode.Mouse0) && Cursor.visible == false && Character.ActionProhibit == false && Character.AttackGet == true || IfGunHided == true && Input.GetKeyDown(KeyCode.Q) && Cursor.visible == false)
             {
                 MemoryItemManage.TakeItemState = 1;
                 InActive = true;
@@ -40,7 +40,7 @@ public class GunAppear : MonoBehaviour
                 StartCoroutine(FadeInFunction());
                 yield return new WaitForSeconds(1.2f);
             }
-            else if (IfGunHided == false && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || t > 12)
+            else if (IfGunHided == false && Input.GetKeyDown(KeyCode.C) && Cursor.visible == false || t > 12 && anim1.GetInteger("SkillState") < 2)
             {
                 MemoryItemManage.TakeItemState = 0;
                 t = 0;

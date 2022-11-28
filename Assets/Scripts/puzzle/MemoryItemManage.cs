@@ -14,8 +14,10 @@ public class MemoryItemManage : MonoBehaviour
     private GameObject MemoryItem;
     private GameObject MemoryItemRightPlace;
     private TextMeshProUGUI MemoryObjectName;
+    public Character character;
     private void Start()
     {
+        character.skills[2].skillstate = 1;
         MemoryObjectName = GetComponentInChildren<TextMeshProUGUI>();
 
     }
@@ -38,6 +40,8 @@ public class MemoryItemManage : MonoBehaviour
         }
         else if(Character.OnMission == 1)
         {
+            MemoryObjectName.text = "Teddy";
+            Debug.Log("");
             MemoryItem = ItemAsset.Instance.MemoryTeddy3D;
             MemoryItemRightPlace = ItemAsset.Instance.MemoryTeddyRightPlace;
         }
@@ -51,6 +55,7 @@ public class MemoryItemManage : MonoBehaviour
     renderfade renderfade;
     private void Update()
     {
+        
         if (Input.GetKeyDown(KeyCode.B))
         {
             MemoryObjectName.text = "";
@@ -97,10 +102,12 @@ public class MemoryItemManage : MonoBehaviour
                 {
                     if (MemoryObjectName.text == "InvitationCard")
                     {
+                        KickUnlock();
                         OldLetterMission = true;
                     }
                     else if (MemoryObjectName.text == "Teddy"|| Character.OnMission == 1)
                     {
+                        DashUnlock();
                         TeddyMission = true;
                     }
                     MemoryItem.transform.SetParent(MemoryItemRightPlace.transform.parent.transform);
@@ -122,7 +129,20 @@ public class MemoryItemManage : MonoBehaviour
             }
         }
     }
-
+    private void KickUnlock()
+    {
+        character.skills[2].skillstate = 1;
+        ItemAsset.Instance.KickMask1.SetActive(false);
+        ItemAsset.Instance.KickMask2.SetActive(false);
+        ItemAsset.Instance.KickIcon.SetActive(true);
+    }
+    private void DashUnlock()
+    {
+        character.skills[0].skillstate = 1;
+        ItemAsset.Instance.DashMask1.SetActive(false);
+        ItemAsset.Instance.DashMask2.SetActive(false);
+        ItemAsset.Instance.DashIcon.SetActive(true);
+    }
     private IEnumerator TimeDelayActionOn(float t)
     {
         yield return new WaitForSeconds(t);

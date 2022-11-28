@@ -71,6 +71,7 @@ public class CameraRotation : MonoBehaviour
     public GameObject BagIcon;
     public GameObject BagIcon2;
     public RectTransform rect;
+    public Canvas canvas2;
     private void CursorHide()
     {
         if (Input.GetKeyDown(KeyCode.B) && cameratotate == false)
@@ -91,6 +92,14 @@ public class CameraRotation : MonoBehaviour
             BagIcon.SetActive(false);
             BagIcon2.SetActive(true);
             rect.anchoredPosition = new Vector2(922, -213);
+        }
+        if (rect.anchoredPosition.x > 0)
+        {
+            canvas2.gameObject.SetActive(false);
+        }
+        else
+        {
+            canvas2.gameObject.SetActive(true);
         }
     }
     public void OnTakeButtonHit()

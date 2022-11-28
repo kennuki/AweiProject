@@ -43,4 +43,21 @@ public class ItemAsset : MonoBehaviour
     public GameObject MemoryOldLetterRightPlace;
     public GameObject MemoryTeddyRightPlace;
 
+    public GameObject DashMask1;
+    public GameObject DashMask2;
+    public GameObject KickMask1;
+    public GameObject KickMask2;
+    public GameObject SpeedMask1;
+    public GameObject SpeedMask2;
+    public GameObject ShootSkill1Mask1;
+    public GameObject ShootSkill1Mask2;
+
+    public GameObject UpgradeKick;
+    public GameObject UpgradeAccelerate;
+    public GameObject UpgradeSkill1;
+
+    public GameObject KickIcon;
+    public GameObject DashIcon;
+    public GameObject Skill1Icon;
+    public GameObject AccelerateIcon;
 }

@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HedgeHogAbility : MonsterAbility
 {
+    public bool StaticMonster = false;
+    public bool Bump = false;
+    private NavMeshAgent agent;
     public Animator animator;
     public GameObject parent;
     protected Rigidbody rig;
     protected void Start()
     {
+        agent = GetComponentInParent<NavMeshAgent>();
         ImaHP = HP;
         rig = parent.GetComponent<Rigidbody>();
     }
@@ -34,7 +39,7 @@ public class HedgeHogAbility : MonsterAbility
     {
         if (other.tag == "Bullet")
         {
-            StartCoroutine(DecayedForce(100, 150));
+            StartCoroutine(DecayedForceZ(80, 150));
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1);
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
@@ -43,13 +48,30 @@ public class HedgeHogAbility : MonsterAbility
         }
         if (other.tag == "Bullet2")
         {
+            StartCoroutine(DecayedForceZ(80, 200));
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1)*1.5f;
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
             StartCoroutine(TimeCount(0.5f));
         }
+        if (other.tag == "Kick"&&KickAllow == true)
+        {
+            if(StaticMonster == false)
+            {
+                KickAllow = false;
+                StartCoroutine(DecayedForceZ(150, 150));
+                StartCoroutine(DecayedForceY(200, 500, 50));
+                HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 0.5f;
+                animator.SetBool("Hit", true);
+                StartCoroutine(TimeCount(0.5f));
+            }
+            else if(StaticMonster == true)
+            {
+                HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 0.5f;
+            }
+        }
     }
-
+    private bool KickAllow = true;
     private IEnumerator TimeCount(float WaitTime)
     {
         yield return new WaitForSeconds(WaitTime);
@@ -57,7 +79,7 @@ public class HedgeHogAbility : MonsterAbility
 
     }
 
-    public IEnumerator DecayedForce(float force,float decayedspeed)
+    public IEnumerator DecayedForceZ(float force,float decayedspeed)
     {
         Quaternion q = Quaternion.Euler(transform.eulerAngles);
         Vector3 f = new Vector3(0, 0, -force);
@@ -71,7 +93,35 @@ public class HedgeHogAbility : MonsterAbility
         rig.velocity = Vector3.zero;
         yield break;
     }
-
+    public IEnumerator DecayedForceY(float force, float decayedspeed,float timerate)
+    {
+        agent.enabled = false;
+        Bump = true;
+        Quaternion q = Quaternion.Euler(transform.eulerAngles);
+        Vector3 f = new Vector3(0, force, 0);
+        Vector3 TargetForce = q * f;
+        float y = TargetForce.y;
+        rig.AddForce(TargetForce);
+        for (float i = 0; i < force; i += Time.deltaTime * timerate)
+        {
+            y += TargetForce.normalized.y * -Time.deltaTime * decayedspeed;
+            rig.AddForce(TargetForce.normalized * -Time.deltaTime * decayedspeed);
+            if (y < -TargetForce.y-5)
+            {
+                rig.velocity = Vector3.zero;
+                Bump = false;
+                agent.enabled = true;
+                KickAllow = true;
+                yield break;
+            }
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+        rig.velocity = Vector3.zero;
+        Bump = false;
+        agent.enabled = true;
+        KickAllow = true;
+        yield break;
+    }
     public void HitAnime()
     {
         animator.SetBool("Hit", false);

@@ -11,12 +11,26 @@ public class UI_Inventory : MonoBehaviour
     private Transform ItemSlotContainer;
     private Transform ItemSlotTemplate;
     private RectTransform ItemSlotContainerRect;
+    private Image image;
+    private TextMeshProUGUI uitext;
+    private TextMeshProUGUI ObjectName;
+    private TextMeshProUGUI ObjectInfo;
+    private TextMeshProUGUI ObjectAdvanceInfo;
+    private TextMeshProUGUI TakeButton;
+    private TextMeshProUGUI MemoryObject3DName;
     private void Start()
     {
         mask = transform.Find("mask");
         ItemSlotContainer = mask.Find("ItemSlotContainer");
         ItemSlotTemplate = ItemSlotContainer.Find("ItemSlotTemplate");
         ItemSlotContainerRect = ItemSlotContainer.GetComponent<RectTransform>();
+        image = ItemSlotTemplate.Find("Image").GetComponent<Image>();
+        uitext = ItemSlotTemplate.Find("Count").GetComponent<TextMeshProUGUI>();
+        ObjectName = ItemSlotTemplate.Find("ObjectName").GetComponent<TextMeshProUGUI>();
+        ObjectInfo = image.GetComponentInChildren<TextMeshProUGUI>();
+        ObjectAdvanceInfo = image.transform.Find("ObjectAdvanceInfo").GetComponent<TextMeshProUGUI>();
+        TakeButton = image.transform.Find("ObjectUse").GetComponent<TextMeshProUGUI>();
+        MemoryObject3DName = image.transform.Find("3DObjectName").GetComponent<TextMeshProUGUI>();
     }
 
 
@@ -65,26 +79,14 @@ public class UI_Inventory : MonoBehaviour
             }
             ItemSlotContainerRect.sizeDelta = ContainerScale + new Vector2(0, 151.272727f);
             ContainerScale = ItemSlotContainerRect.sizeDelta;
-            RectTransform ItemSlotRectTransform = Instantiate(ItemSlotTemplate, ItemSlotContainer).GetComponent<RectTransform>();
-            ItemSlotRectTransform.gameObject.SetActive(true);
-            ItemSlotRectTransform.anchoredPosition = new Vector2(x * ItemSlotCellSize, y * ItemSlotCellSize) + Offset;
-            Image image = ItemSlotRectTransform.Find("Image").GetComponent<Image>();
-            Image image2 = ItemSlotRectTransform.Find("ImageKumo").GetComponent<Image>();
             image.sprite = item.GetSprite();
-            TextMeshProUGUI uitext = ItemSlotRectTransform.Find("Count").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI CountChinese = ItemSlotRectTransform.Find("CountChinese").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI ObjectName = ItemSlotRectTransform.Find("ObjectName").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI ObjectInfo = image.GetComponentInChildren<TextMeshProUGUI>();
-            TextMeshProUGUI ObjectAdvanceInfo = image.transform.Find("ObjectAdvanceInfo").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI TakeButton = image.transform.Find("ObjectUse").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI MemoryObject3DName = image.transform.Find("3DObjectName").GetComponent<TextMeshProUGUI>();
             ObjectName.text = item.GetName();
             ObjectName.color = item.GetNameColor();
             ObjectInfo.text = item.GetInfo();
             MemoryObject3DName.text = item.Get3DMemoryObjectName();
-            if(item.MemoryItem() == true)
+            if (item.MemoryItem() == true)
             {
-                if(item.GetMissionComplete() == true)
+                if (item.GetMissionComplete() == true)
                 {
                     ObjectAdvanceInfo.text = item.GetAdvamceInfo();
                     TakeButton.text = "false";
@@ -96,6 +98,7 @@ public class UI_Inventory : MonoBehaviour
             }
             else
             {
+                ObjectAdvanceInfo.text = item.GetAdvamceInfo();
                 TakeButton.text = "false";
             }
             if (item.amount > 0)
@@ -106,6 +109,9 @@ public class UI_Inventory : MonoBehaviour
             {
                 uitext.SetText("");
             }
+            RectTransform ItemSlotRectTransform = Instantiate(ItemSlotTemplate, ItemSlotContainer).GetComponent<RectTransform>();
+            ItemSlotRectTransform.gameObject.SetActive(true);
+            ItemSlotRectTransform.anchoredPosition = new Vector2(x * ItemSlotCellSize, y * ItemSlotCellSize) + Offset;
             if (item.itemType == Item.ItemType.HealthPotion)
             {
                 HPtext.SetText(item.amount.ToString());

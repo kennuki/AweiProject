@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3421666232050396675}
   - component: {fileID: 4852195797198411170}
   - component: {fileID: 3421666232050396674}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Oldletter
   m_TagString: Memory
   m_Icon: {fileID: 0}
@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TriggerName: trigger3
+  TriggerManager: {fileID: 0}
   Trigger: {fileID: 0}
 --- !u!65 &3421666232050396674
 BoxCollider:
