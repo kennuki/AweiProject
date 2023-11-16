@@ -64,6 +64,7 @@ public class Shoot : MonoBehaviour
         yield return new WaitForEndOfFrame();
         ShootBreak = false;
         yield return new WaitForSeconds(t / character.AS/2*1/4);
+        character.AudioPlayShoot(0);
         Vector3 dir = Vector3.Normalize(CM1.transform.position - CM1LookPoint.transform.position);
         ShootDir = Vector3.Normalize(Pos.transform.position - (CM1LookPoint.transform.position - 15 * dir));
         Instantiate(BulletType, Pos.transform.position, Quaternion.Euler(0, Mathf.Atan2(ShootDir.x, ShootDir.z) *Mathf.Rad2Deg-90, Mathf.Atan2(ShootDir.y, Mathf.Sqrt(ShootDir.z* ShootDir.z + ShootDir.x* ShootDir.x)) * Mathf.Rad2Deg));

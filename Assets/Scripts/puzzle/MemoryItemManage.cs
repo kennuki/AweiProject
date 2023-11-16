@@ -10,14 +10,21 @@ public class MemoryItemManage : MonoBehaviour
     public PlayerBag bag;
     public static bool TeddyMission = false;
     public static bool OldLetterMission = false;
+    public static bool HariMission = false;
+    public static bool InvitationMission = false;
+    public static bool Candy1Mission = false;
+    public static bool Candy3Mission = false;
+    public static bool PeaCandyMission = false;
+    public static bool HamburgerCandyMission = false;
     public Animator anim;
     private GameObject MemoryItem;
     private GameObject MemoryItemRightPlace;
     private TextMeshProUGUI MemoryObjectName;
+    public TextMeshProUGUI MemoryAdvanced;
+    //private TextMeshProUGUI MemoryAdvance;
     public Character character;
     private void Start()
     {
-        character.skills[2].skillstate = 1;
         MemoryObjectName = GetComponentInChildren<TextMeshProUGUI>();
 
     }
@@ -38,10 +45,39 @@ public class MemoryItemManage : MonoBehaviour
             MemoryItem = ItemAsset.Instance.MemoryTeddy3D;
             MemoryItemRightPlace = ItemAsset.Instance.MemoryTeddyRightPlace;
         }
+        if (MemoryObjectName.text == "Hari")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryHari3D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryHariRightPlace;
+        }
+        if (MemoryObjectName.text == "Invitation")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryInvitation3D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryInvitationRightPlace;
+        }
+        if (MemoryObjectName.text == "Candy1")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryCandy13D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryCandy1RightPlace;
+        }
+        if (MemoryObjectName.text == "Candy3")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryCandy33D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryCandy3RightPlace;
+        }
+        if (MemoryObjectName.text == "PeaCandy")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryPeaCandy3D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryPeaCandyRightPlace;
+        }
+        if (MemoryObjectName.text == "HamburgerCandy")
+        {
+            MemoryItem = ItemAsset.Instance.MemoryHamburgerCandy3D;
+            MemoryItemRightPlace = ItemAsset.Instance.MemoryHamburgerCandyRightPlace;
+        }
         else if(Character.OnMission == 1)
         {
             MemoryObjectName.text = "Teddy";
-            Debug.Log("");
             MemoryItem = ItemAsset.Instance.MemoryTeddy3D;
             MemoryItemRightPlace = ItemAsset.Instance.MemoryTeddyRightPlace;
         }
@@ -53,13 +89,11 @@ public class MemoryItemManage : MonoBehaviour
     float MemoryDistance = 0;
     private ItemFollow follow;
     renderfade renderfade;
+    public DoorRotate[] Door;
+    public GameObject Scene2TriggerBox;
+    Collider Scene2Cd;
     private void Update()
     {
-        
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            MemoryObjectName.text = "";
-        }
         if(TakeItemState != 2)
         {
             t = 0;
@@ -73,7 +107,6 @@ public class MemoryItemManage : MonoBehaviour
         {
             if (Character.ActionProhibit==false&&Input.GetKeyDown(KeyCode.Mouse0))
             {
-                Debug.Log("");
                 MemoryObjectName.text = "";
             }
             MemoryDistance = Vector3.Distance(MemoryItem.transform.position, MemoryItemRightPlace.transform.position);
@@ -104,11 +137,37 @@ public class MemoryItemManage : MonoBehaviour
                     {
                         KickUnlock();
                         OldLetterMission = true;
+                        StartCoroutine(TimeDelayActionOn2(2));
                     }
                     else if (MemoryObjectName.text == "Teddy"|| Character.OnMission == 1)
                     {
                         DashUnlock();
                         TeddyMission = true;
+                    }
+                    else if (MemoryObjectName.text == "Hari")
+                    {
+                        character.KickAdvance = true;
+                        HariMission = true;
+                    }
+                    else if (MemoryObjectName.text == "Invitation")
+                    {                       
+                        InvitationMission = true;
+                    }
+                    else if (MemoryObjectName.text == "Candy1")
+                    {
+                        Candy1Mission = true;
+                    }
+                    else if (MemoryObjectName.text == "Candy3")
+                    {
+                        Candy3Mission = true;
+                    }
+                    else if (MemoryObjectName.text == "PeaCandy")
+                    {
+                        PeaCandyMission = true;
+                    }
+                    else if (MemoryObjectName.text == "HamburgerCandy")
+                    {
+                        HamburgerCandyMission = true;
                     }
                     MemoryItem.transform.SetParent(MemoryItemRightPlace.transform.parent.transform);
                     follow = MemoryItem.GetComponent<ItemFollow>();
@@ -116,11 +175,25 @@ public class MemoryItemManage : MonoBehaviour
                 } 
                 if (t > 3)
                 {
-
-                    renderfade = MemoryItem.GetComponentInChildren<renderfade>();
-                    if(renderfade != null)
+                    if (MemoryObjectName.text == "Candy3")
                     {
-                        renderfade.enabled = true;
+                        for(int i = 0; i < 3; i++)
+                        {
+                            renderfade = MemoryItem.GetComponentInChildren<renderfade>();
+                            if (renderfade != null)
+                                renderfade.enabled = true;
+                            renderfade.gameObject.transform.SetAsLastSibling();
+                        }
+
+                    }
+                    else
+                    {
+                        renderfade = MemoryItem.GetComponentInChildren<renderfade>();
+                        if (renderfade != null)
+                            renderfade.enabled = true;
+                        renderfade = MemoryItem.GetComponent<renderfade>();
+                        if (renderfade != null)
+                            renderfade.enabled = true;
                     }
                     MemoryItemRightPlace.SetActive(false);
                     anim.SetBool("Put", false);
@@ -128,6 +201,18 @@ public class MemoryItemManage : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            MemoryAdvanced.text = "";
+            MemoryObjectName.text = "";
+            TakeItemState = 0;
+            anim.SetBool("Put", false);
+            Character.ActionProhibit = false;
+            inventory = bag.inventory;
+            ui_Inventory.SetInventory(inventory);
+        }
+
     }
     private void KickUnlock()
     {
@@ -150,6 +235,18 @@ public class MemoryItemManage : MonoBehaviour
         ui_Inventory.SetInventory(inventory);
         Character.ActionProhibit = false;
         MemoryObjectName.text = "";
+        yield break;
+    }
+    private IEnumerator TimeDelayActionOn2(float t)
+    {
+        yield return new WaitForSeconds(t);
+        foreach (DoorRotate door in Door)
+        {
+            if(door!=null)
+            door.enabled = true;
+        }
+        Scene2Cd = Scene2TriggerBox.GetComponent<Collider>();
+        Scene2Cd.enabled = true;
         yield break;
     }
 }

@@ -13,7 +13,7 @@ public class EnemyHPBar : MonoBehaviour
     void Start()
     {
         HpBar.SetActive(false);
-        imagetocanvas();
+        StartCoroutine(imagetocanvas());
     }
 
     // Update is called once per frame
@@ -27,7 +27,7 @@ public class EnemyHPBar : MonoBehaviour
     void UpdatePosition()
     {
         Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(Target.transform.position);
-        Vector3 offset = new Vector3(0, 145, 0);
+        Vector3 offset = new Vector3(0, 230, 0);
         transform.position = enemyScreenPos + offset;
     }
 
@@ -44,10 +44,22 @@ public class EnemyHPBar : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    void imagetocanvas()
+    private IEnumerator imagetocanvas()
     {
-        //îcimageï˙ìûcanvasè„
-        canvas = GameObject.Find("Canvas2");
-        transform.SetParent(canvas.transform);
+        while (true)
+        {
+            canvas = GameObject.Find("Canvas2");
+            if (canvas != null)
+            {
+                transform.SetParent(canvas.transform);
+                yield break;
+            }
+            else if (canvas == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                canvas = GameObject.Find("Canvas2");
+            }
+        }
+        
     }
 }

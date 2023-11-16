@@ -40,7 +40,6 @@ public class HPRecoverQuide : MonoBehaviour
             }
             if(BlackCanvas.activeSelf)
             {
-                Debug.Log(">");
                 while (true)
                 {
                     

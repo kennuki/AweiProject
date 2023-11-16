@@ -12,9 +12,10 @@ public class PotionRotate : MonoBehaviour
 
     float VibrateRate = 0.05f;
     float c = 0.00003f;
+    public float speed=0.5f;
     void Update()
     {
-        transform.Rotate(0, 0.5f, 0,Space.World);
+        transform.Rotate(0, speed, 0,Space.World);
         VibrateRate -= c;
         if (VibrateRate > 0)
         {

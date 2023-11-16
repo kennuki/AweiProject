@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MonsterGlow
-  m_Shader: {fileID: -6465566751694194690, guid: d8ba9abb02b45aa4f80fb22bf3fa344a, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 8ea115c1812ceb84ea6ee70e0f64fdef, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -89,10 +89,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Alpha: 0.25
+    - Alpha: 0.3
     - Vector1_145283fda03b4df98fb9d1c995689993: 1
     - Vector1_57fd39a0bbc04f6b9e36152d3471ca75: 0
-    - Vector1_af82069a68b344699cedc2551dddcfb9: 5.18
+    - Vector1_af82069a68b344699cedc2551dddcfb9: 7.09
     - Vector1_cb324206225f401c99bd0f2bb7cd0095: 0
     - _AlphaClip: 0
     - _Blend: 0
@@ -120,10 +120,11 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _emission: 4
+    - _emission: 12.34
     m_Colors:
+    - Color_6dcce0b3f79243bc85efff16fd7cd388: {r: 3.137255, g: 2.227451, b: 5.2078433, a: 0}
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
-    - _Color: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.07, g: 0, b: 1.31, a: 0}
+    - _EmissionColor: {r: 3.22, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

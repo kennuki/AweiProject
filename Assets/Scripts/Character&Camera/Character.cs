@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class Character : MonoBehaviour
 {
@@ -16,8 +17,13 @@ public class Character : MonoBehaviour
     CharacterController controller;
     public Shoot shoot;
     public SkillShoot skillShoot;
+    public AudioSource audioSource;
+    public AudioSource audioSourceAction;
+    public AudioClip[] Action;
+    private CharacterAbility characterAbility;
     void Start()
     {
+        characterAbility = GetComponent<CharacterAbility>();
         controller = GetComponent<CharacterController>();
         StartCoroutine(RandomIdle());
         StartCoroutine(NormalAttackFirstStrike());
@@ -26,7 +32,9 @@ public class Character : MonoBehaviour
         StartCoroutine(KickSkill(skills[2].skilltime));
         StartCoroutine(Skill1(skills[3].skilltime));
         gun_m[3].SetFloat("Alpha", 0);
+        gun_m[4].SetFloat("Alpha", 0);
         SkillMaskImageFind();
+        ImaSpeed = speed;
     }
     void FixedUpdate()
     {
@@ -54,7 +62,7 @@ public class Character : MonoBehaviour
         {
             transform.position = new Vector3(47.5f, 10, -22);
         }
-        move.y = -v1 * 15 * Time.deltaTime;
+        move.y = move.y - v1 * 15 * Time.deltaTime;
         controller.Move(move * Time.deltaTime);
     }
     private void Update()
@@ -68,15 +76,17 @@ public class Character : MonoBehaviour
         {
             anim1.SetInteger("AttackRepeat", 0);
         }
+        AudioPlay();
     }
     public Vector3[] SceneStartPosition;
+    public Vector3[] SceneStartRotation;
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         controller.enabled = false;
         transform.position = SceneStartPosition[SceneManager.GetActiveScene().buildIndex];
+        transform.eulerAngles = SceneStartRotation[SceneManager.GetActiveScene().buildIndex];
         controller.enabled = true;
-        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
     public static float speed = 6f;
     public static float imaangle;
@@ -124,11 +134,12 @@ public class Character : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
                 {
-                    anim1.SetBool("RunToIdle", false);
-                    a = 1;
-                    anim1.SetBool("Run", true);
-                    anim1.SetBool("Idle", false);
-                    anim1.SetInteger("IdleState", 1);
+                        anim1.SetBool("RunToIdle", false);
+                        a = 1;
+                        anim1.SetBool("Run", true);
+                        anim1.SetBool("Idle", false);
+                        anim1.SetInteger("IdleState", 1);
+
                 }
                 else
                 {
@@ -177,6 +188,11 @@ public class Character : MonoBehaviour
                     anim1.SetBool("Attack2", false);
                     anim1.SetBool("Attack3", false);
                     anim1.SetBool("Run", false);
+                    if (anim1.GetInteger("SkillState") == 2)
+                    {
+                        anim1.SetInteger("SkillState", 0);
+                        anim1.SetInteger("Skill", 0);
+                    }
                     shoot.ShootBreak = true;
                     SecondStrikeTrigger = false;
                     ThirdStrikeTrigger = false;
@@ -208,18 +224,20 @@ public class Character : MonoBehaviour
 
     }
 
-    
-    float g = 0.8f, v1 = 0, v2 = 0, up = 15.5f;
+    float g = 1f, v1 = 4,c=0;
     private void JumpAndGravityFunction()
     {
+        c += Time.deltaTime;
         if (!controller.isGrounded)
         {
-            v2 = 0;
             v1 = v1 + g;
-            move.y = -v1 * 15 * Time.deltaTime;
-
+            c = 0;
         }
-      
+        else if (controller.isGrounded&&c>0.05f)
+        {
+            v1 = 10;
+        }
+
     }
     private IEnumerator RandomIdle()
     {
@@ -250,9 +268,19 @@ public class Character : MonoBehaviour
         }
     }
 
+    private float ImaSpeed = 0;
+    private float BonusAS = 1;
+    private float BonusSP = 1;
     public float BonusSpeed = 1;
+    public float DebuffSpeed = 1;
     private void AccelerateFunction()
     {
+        if(MemoryItemManage.Candy1Mission == true)
+        {
+            BonusAS = 1.2f;
+            BonusSP = 1.1f;
+        }
+        DebuffSpeed = CharacterAbility.SP;
         if (skills[1].cooldown - skills[1].ActiveTimeLeft < skills[1].skilltime)
         {
             BonusSpeed = 1.7f;
@@ -261,25 +289,31 @@ public class Character : MonoBehaviour
         {
             BonusSpeed = 1;
         }
-        anim1.SetFloat("AS", 1.2f * BonusSpeed);
+        anim1.SetFloat("AS", 1.2f * BonusSpeed * DebuffSpeed * BonusAS);
         if (anim1.GetLayerWeight(1) < 0.5)
         {
-            speed = 6.2f * BonusSpeed;
-            anim1.SetFloat("RunSpeed", 1.1f*BonusSpeed);
+            speed = 6.4f * BonusSpeed * DebuffSpeed * BonusSP;
+            anim1.SetFloat("RunSpeed", 1.1f*BonusSpeed * DebuffSpeed);
         }
         if (anim1.GetLayerWeight(1) >= 0.5)
         {
-            speed = 4.8f * BonusSpeed;
-            anim1.SetFloat("RunSpeed", 0.8f*BonusSpeed);
+            speed = 5f * BonusSpeed * DebuffSpeed * BonusSP;
+            anim1.SetFloat("RunSpeed", 0.8f*BonusSpeed * DebuffSpeed * BonusSP);
         }
     }
     private IEnumerator AccelerateSkill()
     {
         while (true)
-        {
-            int state = 0;
-            if (Input.GetKey(KeyCode.E)&&skills[1].skillstate == 1)
+        {      
+            if(MemoryItemManage.PeaCandyMission == true)
             {
+                skills[1].skilltime = 12f;
+            }
+            int state = 0;
+            if (Input.GetKey(KeyCode.E)&&skills[1].skillstate == 1 && characterAbility.MP >= 10)
+            {
+                characterAbility.MP -= 15;
+                audioSourceAction.PlayOneShot(Action[3],0.2f);
                 StartCoroutine(BodyAccelerateSparkle(3, skills[1].skilltime));
                 state = 1;
             }
@@ -291,34 +325,55 @@ public class Character : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
-    public GameObject FootCollider;
-    public bool KickAdvance = true;
+    public GameObject Foot;
+    Collider FootCollider;
+    public bool KickAdvance = false;
     private IEnumerator KickSkill(float skilltime)
     {
+        FootCollider = Foot.GetComponent<Collider>();
         while (true)
         {
-            if (skills[2].skillstate == 1 && Input.GetKey(KeyCode.Mouse1)&&anim1.GetInteger("SkillState")<3)
+            if (skills[2].skillstate == 1 && Input.GetKey(KeyCode.Mouse1)&&anim1.GetInteger("SkillState")<3&&anim1.GetBool("Dash")==false&&characterAbility.MP>=5)
             {
+                characterAbility.MP -= 5;
+                StartCoroutine(Jump(5f));
                 AttackGet = false;
                 SkillUseFunction(skills[2].skillname, skills[2].cooldown);
                 anim1.SetInteger("SkillState", 2);
                 anim1.SetInteger("Skill", 2);
-                FootCollider.SetActive(true);
                 StartCoroutine(Attack1Move(0, 1f * AS, 20f / AS));
-                StartCoroutine(Attack1Move(20/ AS, -5f * AS, 80f / AS));
-                if(KickAdvance == true)
+                StartCoroutine(Attack1Move(20/ AS, -5.8f * AS, 80f / AS));
+                if (KickAdvance == true)
                 {
+                    audioSourceAction.PlayOneShot(Action[2], 0.25f);
                     anim1.SetLayerWeight(1, 1);
                     anim1.SetFloat("KickBlend", 1);
-                    yield return new WaitForSeconds(skilltime / AS*0.6f);
-                    skillShoot.ShootFunction(skillShoot.ShootRight, skillShoot.bullet2, skillShoot.ShootEffectRight, skillShoot.ShootEffect);
+                    yield return new WaitForSeconds(skilltime / AS * 0.3f);
+                    FootCollider.enabled = true;
+                    yield return new WaitForSeconds(skilltime / AS * 0.3f);
+                    if (anim1.GetInteger("SkillState") == 2)
+                    {
+                        audioSourceAction.PlayOneShot(Action[1], 0.4f);
+                        skillShoot.ShootFunction(skillShoot.ShootRight, skillShoot.bullet2, skillShoot.ShootEffectRight, skillShoot.ShootEffect);
+                    }
+                    else
+                    {
+                        anim1.SetInteger("SkillState", 0);
+                        anim1.SetInteger("Skill", 0);
+                        FootCollider.enabled = false;
+                        AttackGet = true;
+                        continue;
+                    }
                     yield return new WaitForSeconds(skilltime / AS * 0.4f);
                 }
                 else
                 {
-                    yield return new WaitForSeconds(skilltime / AS);
+                    audioSourceAction.PlayOneShot(Action[2], 0.25f);
+                    yield return new WaitForSeconds(skilltime / AS * 0.3f);
+                    FootCollider.enabled = true;
+                    yield return new WaitForSeconds(skilltime / AS * 0.7f);
                 }
-                FootCollider.SetActive(false);
+                FootCollider.enabled = false;
                 AttackGet = true;
                 if (anim1.GetInteger("Skill") == 2)
                 {
@@ -331,16 +386,28 @@ public class Character : MonoBehaviour
         }
 
     }
+    private IEnumerator Jump(float force)
+    {
+        yield return new WaitForSeconds(skills[2].skilltime / AS * 0.05f);
+        v1 = 0;
+        for (float i=0; i< skills[2].skilltime / AS * 0.15f; i += Time.deltaTime)
+        {
+            v1 = v1 - (force*(0.2f+i));
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+    }
     private IEnumerator Skill1(float skilltime)
     {
         while (true)
         {
             if(Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
             {
+                if(skills[2].skillstate!=2)
                 anim1.SetBool("Run", true);
             }
-            if (skills[3].skillstate == 1 && Input.GetKey(KeyCode.Q))
+            if (skills[3].skillstate == 1 && Input.GetKey(KeyCode.Q)&&anim1.GetInteger("SkillState")!=2 && characterAbility.MP >= 10)
             {
+                characterAbility.MP -= 20;
                 AttackGet = false;
                 SkillUseFunction(skills[3].skillname, skills[3].cooldown);
                 anim1.SetInteger("SkillState", 3);
@@ -349,12 +416,18 @@ public class Character : MonoBehaviour
                 yield return new WaitForSeconds((skilltime*2 / 13)/AS);
                 for (int i = 0; i < 5; i++)
                 {
-                    if (anim1.GetBool("Dash") == false)
+                    if (anim1.GetBool("Dash") == false||anim1.GetInteger("SkillState")==3)
                     {
                         skillShoot.ShootFunction(skillShoot.ShootRight, skillShoot.bullet,skillShoot.ShootEffectRight,skillShoot.ShootEffect);
+                        audioSourceAction.PlayOneShot(Action[1], 0.32f);
                         yield return new WaitForSeconds((skilltime / 13) / AS);
                         skillShoot.ShootFunction(skillShoot.ShootLeft, skillShoot.bullet,skillShoot.ShootEffectLeft, skillShoot.ShootEffect);
+                        audioSourceAction.PlayOneShot(Action[1], 0.32f);
                         yield return new WaitForSeconds((skilltime / 13) / AS);
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
                 AttackGet = true;
@@ -389,7 +462,7 @@ public class Character : MonoBehaviour
     {
         if (anim1.GetBool("Dash") == true)
         {
-            anim1.SetInteger("SkillState", 0);
+            
         }
         foreach(Skill skill in skills)
         {
@@ -424,11 +497,6 @@ public class Character : MonoBehaviour
             }
         }
     }
-
-
-
-
-
 
     public Material[] gun_m;
     public float AS = 1.5f;
@@ -618,6 +686,10 @@ public class Character : MonoBehaviour
                     DirCache = dir.normalized;
                 if (i > offsetframe)
                     controller.Move(DirCache * speed * Time.fixedDeltaTime);
+                if (anim1.GetBool("Dash") == true)
+                {
+                    yield break;
+                }
                 yield return new WaitForSeconds(0.01f);
             }
             yield break;
@@ -718,6 +790,52 @@ public class Character : MonoBehaviour
             }
         }
     }
+    public IEnumerator BodyBeHitSparkle(int i, float duration)
+    {
+        float t = 0;
+        float alphaclip = 0;
+        yield return new WaitForSeconds(0.01f * AS);
+        while (true)
+        {
+            t += Time.deltaTime * 22 * AS;
+            if (t <= 0.9f)
+            {
+                alphaclip = t * 0.8f;
+                if (skills[1].cooldown - skills[1].ActiveTimeLeft <= skills[1].skilltime)
+                {
+                    gun_m[3].SetFloat("Alpha", gun_m[3].GetFloat("Alpha") - (Time.deltaTime * 22 * AS * 0.4f * 0.8f));
+                }
+                gun_m[i].SetFloat("Alpha", alphaclip);
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+            else if (t > 0.9f && t <= duration)
+            {
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+            else if (t > duration)
+            {
+                alphaclip -= 0.058f * AS;
+                gun_m[i].SetFloat("Alpha", alphaclip);
+                if (skills[1].cooldown - skills[1].ActiveTimeLeft <= skills[1].skilltime)
+                {
+                    gun_m[3].SetFloat("Alpha", gun_m[3].GetFloat("Alpha") + (0.054f * AS * 0.4f));
+                }
+                if (alphaclip <= 0)
+                {
+                    if (skills[1].cooldown - skills[1].ActiveTimeLeft > skills[1].skilltime)
+                    {
+                        gun_m[3].SetFloat("Alpha", 0);
+                    }
+                    else
+                    {
+                        gun_m[3].SetFloat("Alpha", 0.09776092f);                     
+                    }
+                    yield break;
+                }
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+        }
+    }
     private IEnumerator BodyAccelerateSparkle(int i,float duration)
     {
         float t = 0;
@@ -760,6 +878,46 @@ public class Character : MonoBehaviour
     public ParticleSystem DashTrail;
     public GameObject Leftgun;
 
+    float AudioT = 0;
+    public AudioMixer WalkSound;
+    bool WalkAudio = false;
+    private void AudioPlay()
+    {
+        AudioT += Time.deltaTime;
+        if (AudioT > 0.1f)
+        {
+            if (anim1.GetCurrentAnimatorStateInfo(0).IsName("Run2") == true && WalkAudio == false || ImaSpeed != speed)
+            {
+                audioSource.Stop();
+                audioSource.pitch = Mathf.Clamp(anim1.GetFloat("RunSpeed"), 0, 2);
+                audioSource.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 1 / (anim1.GetFloat("RunSpeed")));
+                audioSource.Play();
+                WalkAudio = true;
+                ImaSpeed = speed;
+            }
+            else if (anim1.GetCurrentAnimatorStateInfo(0).IsName("Run2") == false && WalkAudio == true)
+            {
+                StartCoroutine(VolumeSmooth());
+                WalkAudio = false;
+            }
+        }
+
+    }
+    public void AudioPlayShoot(int ActionAudio)
+    {
+        audioSourceAction.PlayOneShot(Action[0], 0.3f);
+    }
+    public float OrifinVolume;
+    private IEnumerator VolumeSmooth()
+    {
+        for(float i=0; i<=0.1f; i += 0.01f)
+        {
+            audioSource.volume -= 0.05f;
+            yield return new WaitForSeconds(0.01f);
+        }
+        audioSource.Stop();
+        audioSource.volume = OrifinVolume;
+    }
 
 
 }

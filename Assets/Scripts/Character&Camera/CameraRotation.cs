@@ -37,7 +37,7 @@ public class CameraRotation : MonoBehaviour
     }
     public CloseGame closeGame;
     public bool state = false;
-    bool cameratotate = true;
+    public static bool cameratotate = true;
     private IEnumerator LockCursorToMiddle()
     {
         float waittime;
@@ -125,6 +125,15 @@ public class CameraRotation : MonoBehaviour
         }
     }
     public void OnBagIconBackHit()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        cameratotate = true;
+        BagIcon.SetActive(true);
+        BagIcon2.SetActive(false);
+        rect.anchoredPosition = new Vector2(-998, -213);
+    }
+    public void HideBag()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -318,10 +327,14 @@ public class CameraRotation : MonoBehaviour
     public float ScrollSensitivity = 10;
     private void CameraScrollFunction()
     {
-        float Fov = CM1.m_Lens.FieldOfView;
-        Fov -= Input.GetAxis("Mouse ScrollWheel") * ScrollSensitivity;
-        Fov = Mathf.Clamp(Fov, MinFov, MaxFov);
-        CM1.m_Lens.FieldOfView = Fov;
+        if(Cursor.visible == false)
+        {
+            float Fov = CM1.m_Lens.FieldOfView;
+            Fov -= Input.GetAxis("Mouse ScrollWheel") * ScrollSensitivity;
+            Fov = Mathf.Clamp(Fov, MinFov, MaxFov);
+            CM1.m_Lens.FieldOfView = Fov;
+        }
+
     }
 
     public Animator anim1;
@@ -334,6 +347,21 @@ public class CameraRotation : MonoBehaviour
         }
         anim1.SetFloat("PosX", Mathf.Clamp((CameraXAngle + 15) / 55, 0, 1));
     }
-
+    public AnimationCurve Curve;
+    float ShakeDuration = 0.75f;
+    public IEnumerator CameraShake()
+    {
+        var transposer = CM1.GetCinemachineComponent<CinemachineTransposer>();
+        Vector3 OringinPos = transposer.m_FollowOffset;
+        float ShakeTime = 0;
+        while (ShakeTime < ShakeDuration)
+        {
+            ShakeTime += Time.deltaTime;
+            float strength = Curve.Evaluate(ShakeTime / ShakeDuration);
+            transposer.m_FollowOffset = OringinPos + Random.insideUnitSphere*strength;
+            yield return null;
+        }
+        transposer.m_FollowOffset = OringinPos;
+    }
 
 }

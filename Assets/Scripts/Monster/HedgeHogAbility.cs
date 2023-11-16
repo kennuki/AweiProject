@@ -13,6 +13,7 @@ public class HedgeHogAbility : MonsterAbility
     protected Rigidbody rig;
     protected void Start()
     {
+        CA = GameObject.Find("Character").GetComponent<CharacterAbility>();
         agent = GetComponentInParent<NavMeshAgent>();
         ImaHP = HP;
         rig = parent.GetComponent<Rigidbody>();
@@ -33,37 +34,53 @@ public class HedgeHogAbility : MonsterAbility
         DistanceToPlayer();
         HitFunction();
     }
-
+    private bool DropAllow = false;
     public CharacterAbility CA;
     private void OnTriggerEnter(Collider other)
     {
+        if(other.tag == "Floor")
+        {
+            if (agent != null)
+                DropAllow = false;
+        }
         if (other.tag == "Bullet")
         {
             StartCoroutine(DecayedForceZ(80, 150));
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1);
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
-            StartCoroutine(TimeCount(0.5f));
 
         }
-        if (other.tag == "Bullet2")
+        else if (other.tag == "Bullet2")
         {
             StartCoroutine(DecayedForceZ(80, 200));
             HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1)*1.5f;
             Destroy(other.gameObject);
             animator.SetBool("Hit", true);
-            StartCoroutine(TimeCount(0.5f));
         }
-        if (other.tag == "Kick"&&KickAllow == true)
+        else if (other.tag == "SkillBullet")
+        {
+            StartCoroutine(DecayedForceZ(80, 200));
+            HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 1.4f;
+            Destroy(other.gameObject);
+            animator.SetBool("Hit", true);
+        }
+        else if (other.tag == "SkillBullet2" && other.GetType() == typeof(CapsuleCollider) && ExplodeAllow == true)
+        {
+            StartCoroutine(DecayedForceZ(80, 200));
+            HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 9f;
+            Destroy(other.gameObject,0.1f);
+            animator.SetBool("Hit", true);
+        }
+        else if (other.tag == "Kick"&&KickAllow == true)
         {
             if(StaticMonster == false)
             {
                 KickAllow = false;
                 StartCoroutine(DecayedForceZ(150, 150));
                 StartCoroutine(DecayedForceY(200, 500, 50));
-                HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 0.5f;
+                HP -= CA.AD * (Mathf.Clamp(Random.Range(CA.CritRate + 0.1f, CA.CritRate + 1.1f) - 1, 0, 1) + 1) * 2.2f;
                 animator.SetBool("Hit", true);
-                StartCoroutine(TimeCount(0.5f));
             }
             else if(StaticMonster == true)
             {
@@ -71,12 +88,13 @@ public class HedgeHogAbility : MonsterAbility
             }
         }
     }
+    private bool ExplodeAllow = true;
     private bool KickAllow = true;
-    private IEnumerator TimeCount(float WaitTime)
+    private IEnumerator ExplodeHit()
     {
-        yield return new WaitForSeconds(WaitTime);
-        HitAnime();
-
+        ExplodeAllow = false;
+        yield return new WaitForSeconds(1f);
+        ExplodeAllow = true;
     }
 
     public IEnumerator DecayedForceZ(float force,float decayedspeed)
@@ -102,11 +120,12 @@ public class HedgeHogAbility : MonsterAbility
         Vector3 TargetForce = q * f;
         float y = TargetForce.y;
         rig.AddForce(TargetForce);
+        DropAllow = true;
         for (float i = 0; i < force; i += Time.deltaTime * timerate)
         {
             y += TargetForce.normalized.y * -Time.deltaTime * decayedspeed;
             rig.AddForce(TargetForce.normalized * -Time.deltaTime * decayedspeed);
-            if (y < -TargetForce.y-5)
+            if (y < -TargetForce.y||DropAllow == false)
             {
                 rig.velocity = Vector3.zero;
                 Bump = false;
@@ -132,6 +151,7 @@ public class HedgeHogAbility : MonsterAbility
     protected void DistanceToPlayer()
     {
         float dist = Vector3.Distance(CA.transform.position, transform.position);
+        
         if (dist < ShowHPDistance)
         {
             deadbydaylight = true;
@@ -152,7 +172,7 @@ public class HedgeHogAbility : MonsterAbility
             HitNum = HP - ImaHP;
             Instantiate(ShowHit, transform.position, Quaternion.identity);
             ImaHP = HP;
-
+            CharacterAbility.HPSteal += 1;
         }
     }
     public Item.ItemType[] itemTypes;

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UI_Inventory : MonoBehaviour
 {
+
     private Inventory inventory;
     private Transform mask;
     private Transform ItemSlotContainer;
@@ -32,11 +34,53 @@ public class UI_Inventory : MonoBehaviour
         TakeButton = image.transform.Find("ObjectUse").GetComponent<TextMeshProUGUI>();
         MemoryObject3DName = image.transform.Find("3DObjectName").GetComponent<TextMeshProUGUI>();
     }
-
-
-    public void SetInventory(Inventory inventory)
+    private int ImaHPPotion = 0;
+    private int ImaMPPotion = 0;
+    private int ImaCrystal = 0;
+    private void Update()
     {
 
+    }
+    public void OnSceneChange()
+    {
+        foreach (Item item in inventory.GetItemList())
+        {
+            if (item.itemType == Item.ItemType.HealthPotion)
+            {
+                ImaHPPotion = item.amount;
+            }
+            if (item.itemType == Item.ItemType.ManaPotion)
+            {
+                ImaMPPotion = item.amount;
+            }
+            if (item.itemType == Item.ItemType.Crystal)
+            {
+                ImaCrystal = item.amount;
+            }
+        }
+        RefreshInventoryItem();
+    }
+    public void OnSceneReloaded()
+    {
+        foreach (Item item in inventory.GetItemList())
+        {
+            if (item.itemType == Item.ItemType.HealthPotion)
+            {
+                item.amount = ImaHPPotion;
+            }
+            if (item.itemType == Item.ItemType.ManaPotion)
+            {
+                item.amount = ImaMPPotion;
+            }
+            if (item.itemType == Item.ItemType.Crystal)
+            {
+                item.amount = ImaCrystal;
+            }
+            RefreshInventoryItem();
+        }
+    }
+    public void SetInventory(Inventory inventory)
+    {
         this.inventory = inventory;
 
         inventory.OnItemListChanged += Inventory_OnItemListChanged;
@@ -45,12 +89,12 @@ public class UI_Inventory : MonoBehaviour
 
     private void Inventory_OnItemListChanged(object sender,System.EventArgs e)
     {
-        RefreshInventoryItem();
+        RefreshHPMP();
     }
 
     public TextMeshProUGUI HPtext;
     public TextMeshProUGUI MPtext;
-    private void RefreshInventoryItem()
+    public void RefreshInventoryItem()
     {
         foreach (Transform child in ItemSlotContainer)
         {
@@ -77,6 +121,7 @@ public class UI_Inventory : MonoBehaviour
                 }
                 continue;
             }
+
             ItemSlotContainerRect.sizeDelta = ContainerScale + new Vector2(0, 151.272727f);
             ContainerScale = ItemSlotContainerRect.sizeDelta;
             image.sprite = item.GetSprite();
@@ -93,6 +138,7 @@ public class UI_Inventory : MonoBehaviour
                 }
                 else
                 {
+                    ObjectAdvanceInfo.text = "";
                     TakeButton.text = "true";
                 }
             }
@@ -132,5 +178,34 @@ public class UI_Inventory : MonoBehaviour
 
         }
     }
+    public void RefreshHPMP()
+    {
+        foreach (Item item in inventory.GetItemList())
+        {
+            if (item.amount <= 0)
+            {
+                item.amount = 0;
+                if (item.itemType == Item.ItemType.HealthPotion)
+                {
+                    HPtext.SetText(item.amount.ToString());
+                }
+                if (item.itemType == Item.ItemType.ManaPotion)
+                {
+                    MPtext.SetText(item.amount.ToString());
+                }
+            }
+            else
+            {
+                if (item.itemType == Item.ItemType.HealthPotion)
+                {
+                    HPtext.SetText(item.amount.ToString());
+                }
+                if (item.itemType == Item.ItemType.ManaPotion)
+                {
+                    MPtext.SetText(item.amount.ToString());
+                }
+            }
 
+        }
+    }
 }

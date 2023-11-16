@@ -14,17 +14,12 @@ public class HedgeHog : MonoBehaviour
         HedgeHogAbility = GetComponentInChildren<HedgeHogAbility>();
         float damage = HedgeHogAbility.AD * 1.1f;
         pin.GetComponent<Pin>().AttackDamage = damage;
+        PlayerTransform = GameObject.Find("Character").GetComponent<Transform>();
         StartCoroutine(AttackFunction());
     }
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Instantiate(pin, transform.position, Quaternion.Euler(Random.Range(-85,-95), 0+OutterBody.transform.rotation.eulerAngles.y-90, 90));
-            Instantiate(pin, transform.position, Quaternion.Euler(Random.Range(-65, -75), 0+transform.rotation.eulerAngles.y - 90, 90));
-            Instantiate(pin, transform.position, Quaternion.Euler(Random.Range(-105, -115), 0+transform.rotation.eulerAngles.y - 90, 90));
-        }
     }
     public Transform OutterBody;
     public Transform PlayerTransform;

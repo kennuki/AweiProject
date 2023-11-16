@@ -14,7 +14,7 @@ public class Hedgehog2 : Monster2
         if (State == 0)
         {
             Patrol(2);
-            if (Vector3.Distance(playerPos, MyPos) < detectdistance)
+            if (Vector3.Distance(playerPos, MyPos) < detectdistance && angle < 45)
             {
                 State = 1;
             }
@@ -53,6 +53,7 @@ public class Hedgehog2 : Monster2
             AttackFunction(1.5f);
         }
     }
+    public AudioSource audioSource;
     public override void Attack1()
     {
         agent.speed =0.05f;
@@ -68,6 +69,7 @@ public class Hedgehog2 : Monster2
         idle_CD += Time.deltaTime;
         if (idle_CD > 0.39f && idle_CD<0.42f)
         {
+            audioSource.Play();
             idle_CD += 0.02f;
             TriggerCollider.enabled = true;
         }

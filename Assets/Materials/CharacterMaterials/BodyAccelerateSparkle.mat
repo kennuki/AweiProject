@@ -26,7 +26,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -92,8 +92,8 @@ Material:
     - Alpha: 0
     - Vector1_145283fda03b4df98fb9d1c995689993: 1
     - Vector1_57fd39a0bbc04f6b9e36152d3471ca75: 0
-    - Vector1_af82069a68b344699cedc2551dddcfb9: 4.13
-    - Vector1_cb324206225f401c99bd0f2bb7cd0095: 0
+    - Vector1_af82069a68b344699cedc2551dddcfb9: 1.72
+    - Vector1_cb324206225f401c99bd0f2bb7cd0095: 10.76
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -120,10 +120,10 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _emission: 8.27
+    - _emission: 34.21
     m_Colors:
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
-    - _Color: {r: 0, g: 2.76, b: 5.3, a: 0}
+    - _Color: {r: 0, g: 0.38, b: 0.625, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

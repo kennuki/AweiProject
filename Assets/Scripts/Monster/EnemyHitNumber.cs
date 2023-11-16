@@ -28,6 +28,7 @@ public class EnemyHitNumber : MonoBehaviour
     {
         //”cimage•ú“canvasã
         canvas = GameObject.Find("Canvas2");
-        transform.SetParent(canvas.transform);
+        if (canvas != null)
+            transform.SetParent(canvas.transform);
     }
 }

@@ -19,13 +19,13 @@ public class PuzzleQuide : MonoBehaviour
     public GameObject[] nexttrigger;
     public GameObject CanvaDialog;
     private TextMeshProUGUI text1, text2;
+    public CameraRotation cameraRotation;
     void Start()
     {
         inventory = bag.inventory;
         bag.GetTargetItemOnTop(Item.ItemType.Teddy);
         ui_Inventory.SetInventory(inventory);
         StartCoroutine(PuzzleGuideFunction());
-
     }
 
     void Update()
@@ -34,6 +34,7 @@ public class PuzzleQuide : MonoBehaviour
     int step = 0;
     GameObject icon;
     GameObject dialog;
+    public Scrollbar scrollbar;
     private IEnumerator PuzzleGuideFunction()
     {
         Character.OnMission = 1;
@@ -48,6 +49,8 @@ public class PuzzleQuide : MonoBehaviour
             }
             else
             {
+                cameraRotation.HideBag();
+                scrollbar.value = 1;
                 Time.timeScale = 0f;
                 BlackPanel.SetActive(true);
                 Character.ActionProhibit = true;

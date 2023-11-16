@@ -15,6 +15,9 @@ TagManager:
   - Memory
   - UnderWater
   - Kick
+  - SkillBullet
+  - SkillBullet2
+  - Cotton
   layers:
   - Default
   - TransparentFX
@@ -31,8 +34,8 @@ TagManager:
   - UnderWater
   - Skill
   - Item
-  - 
-  - 
+  - IgnoreCd
+  - VFXUI
   - 
   - 
   - 

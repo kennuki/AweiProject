@@ -12,7 +12,7 @@ public class Monster2 : MonoBehaviour
         agent.isStopped = false;
         cd = this.GetComponent<Collider>();
         HedgeHogAbility = GetComponentInChildren<HedgeHogAbility>();
-
+        PlayerTransform = GameObject.Find("Character").transform;
     }
     public HedgeHogAbility HedgeHogAbility;
     // Update is called once per frame
@@ -22,10 +22,16 @@ public class Monster2 : MonoBehaviour
         {
             AIFunction();
         }
-
+        FaceAngle();
         
     }
-
+    public float angle;
+    public void FaceAngle()
+    {
+        float dis = Vector3.Distance(PlayerTransform.transform.position, transform.position);
+        float Ydis = Mathf.Abs(PlayerTransform.transform.position.y - transform.position.y);
+        angle = Mathf.Asin(Ydis / dis) * Mathf.Rad2Deg;
+    }
     protected Animator anim;
     public Transform PlayerTransform;
     protected int State = 0;
@@ -60,13 +66,27 @@ public class Monster2 : MonoBehaviour
             anim.SetInteger("State", 1);
             agent.speed = 1.5f;
         }
-        agent.SetDestination(ran);
+        if (agent.isOnNavMesh)
+        {
+            agent.SetDestination(ran);
+        }
+        else
+        {
+            agent.velocity = transform.rotation * new Vector3(0, 4, 0);
+        }
     }
     public virtual void Chasing(float v)
     {
         anim.SetInteger("State", 1);
         agent.speed = v;
-        agent.SetDestination(PlayerTransform.transform.position);
+        if (agent.isOnNavMesh)
+        {
+            agent.SetDestination(PlayerTransform.transform.position);
+        }
+        else
+        {
+            agent.velocity = transform.rotation * new Vector3(0, 4, 0);
+        }
     }
     public virtual void Stop()
     {

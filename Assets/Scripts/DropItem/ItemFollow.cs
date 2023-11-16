@@ -25,6 +25,6 @@ public class ItemFollow : MonoBehaviour
         {
             rb.velocity = new Vector3(p.x, p.y, p.z);
         }
-        transform.rotation = Quaternion.Lerp(transform.rotation, Target.transform.rotation, 0.02f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Target.transform.rotation, 0.04f);
     }
 }
